@@ -8,3 +8,4 @@ cabal-dev
 
 #Ignore MAC fuzz
 *.DS_Store
+
