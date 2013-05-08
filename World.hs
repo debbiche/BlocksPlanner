@@ -9,16 +9,14 @@ data Shape = Square | Rectangle | Pyramid | Ball | Box
 data Color = Red | Black | Blue | Green | Yellow | White
            deriving (Show)
                     
-data Form = Form { shape :: Shape, color :: Color }
+data Form = Form Shape Color 
             deriving (Show)
 
-data Object = Maybe Form
-            deriving (Show)
-
---data Block = [Object]
-
-data World =  World [[Maybe Object]]
+data Stack = Empty | Stack [Form]
+           deriving (Show)
+             
+data World =  World [Stack]
            deriving (Show)
                     
 blankWorld :: World
-blankWorld = World $ replicate 9 (replicate 10 Nothing)
+blankWorld = World $ replicate 10 Empty
