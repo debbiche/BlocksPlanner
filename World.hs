@@ -8,17 +8,20 @@ data Shape = Square | Rectangle | Pyramid | Ball | Box
           
 data Color = Red | Black | Blue | Green | Yellow | White
            deriving (Show)
+
+data Size = Large | Medium | Small | Tall | Wide
+          deriving (Show)
                     
-data Form = Form { shape :: Shape, color :: Color }
+data Block = Block Shape Size Color 
             deriving (Show)
 
-data Object = Maybe Form
-            deriving (Show)
+data Grabber = Nothing | Grabber Block
+             deriving (Show)
 
---data Block = [Object]
-
-data World =  World [[Maybe Object]]
+data Stack =  Empty | Stack [Block]
+           deriving (Show)
+data World =  World [Stack] Grabber
            deriving (Show)
                     
-blankWorld :: World
-blankWorld = World $ replicate 9 (replicate 10 Nothing)
+--blankWorld :: World
+--blankWorld = World $ replicate 10 (Empty Nothing)
