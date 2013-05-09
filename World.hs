@@ -73,7 +73,14 @@ pick (world, grabber) column = ((world, grabber), False)
 
 
 dropp :: ([Stack], Maybe Block) -> Int -> (([Stack], Maybe Block), Bool)
-dropp (world, grabber) column = ((world, grabber), True) -- dummy
+dropp (world, Nothing) column = ((world, Nothing), False) -- Nothing to drop
+dropp (world, Just block) column = ((new_world, Just block) ,True)
+  where
+    new_world      = world !!= (column, new_column)
+    new_column     = current_column !!= (index, Just block)
+    Just index     = elemIndex Nothing current_column
+    current_column = get_stack world column -- column to drop on
+    
 
 
 -- Updates the ith element in a list with v    
