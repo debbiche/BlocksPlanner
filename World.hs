@@ -20,8 +20,8 @@ data Block = Block Shape Size Color
 type Grabber = Maybe Block
     --        deriving (Show, Eq)
 
-data Stack = Stack [Block]
-           deriving (Show, Eq)
+type Stack = [Maybe Block]
+       --    deriving (Show, Eq)
                     
 data World = World ([Stack], Grabber)
            deriving (Show, Eq)
@@ -64,10 +64,11 @@ execute world ("pick", column) = pick world column
 execute world ("drop", column) = dropp world column
 
 pick ::([Stack], Maybe Block) -> Int -> (([Stack], Maybe Block), Bool)
-pick (world, Nothing) column = ((new_world, Just new_grabber), True) -- dummy
+pick (world, Nothing) column = ((new_world, new_grabber), True) -- dummy
   where
-    new_world   = (world !! column) !!= (0, Nothing) -- make first elem of column empty
-    new_grabber = (world !! column) !! 0 
+    new_world   = world !!= (column, new_column) -- make first elem of column empty
+    new_grabber = (world !! column) !! 0
+    new_column  = (get_stack world column) !!= (0, Nothing)
 pick (world, grabber) column = ((world, grabber), False)
 
 
@@ -80,3 +81,11 @@ dropp (world, grabber) column = ((world, grabber), True) -- dummy
 (x:xs) !!= (0,el) = (el:xs)
 (x:xs) !!= (n,el) = (x:( xs !!= (n-1,el))) 
 
+
+get_stack :: [Stack] -> Int -> Stack
+get_stack stack col = get_stack' stack col 0
+  where
+    get_stack' [] _ acc = (error "Invalid Stack Column")
+    get_stack' (x:xs) col acc
+      | col == acc = x
+      | otherwise  = get_stack' xs col acc
