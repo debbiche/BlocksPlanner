@@ -5,6 +5,11 @@ cabal-dev
 *.chi
 *.chs.h
 .virthualenv
+error.log
+Shrd*
+shrd*
+jquery*
+lighttpd.conf
 
 #Ignore MAC fuzz
 *.DS_Store
