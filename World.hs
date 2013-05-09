@@ -20,14 +20,50 @@ data Grabber = Clear | Grabber Block deriving (Show, Eq)
 
 data Stack = Empty | Stack [Block] deriving (Show, Eq)
                     
-data World = World (Stack, Grabber) deriving (Show, Eq)
+data World = World ([Stack], Grabber) deriving (Show, Eq)
 
 type Plan = [(String, Int)] -- consider changing to actio
         --  deriving(Show)
 
 -- (String, Int) = action
 
+--SHAPES CREATION
+ a = Rectangle Tall Blue
+ b = Ball Small White
+ c = Square Large Red
+ d = Pyramid Large Green
+ e = Box Large White
+ f = Rectangle Wide Black
+ g = Rectangle Wide Blue
+ h = Rectangle Wide Red
+ i = Pyramid Medium Yellow
+ j = Box Large Red
+ k = Ball Small Yellow
+ l = Box Medium Red
+ m = Ball Medium Blue
 
+ --INITIAL WORLD CREATION
+
+ s1 =[a,b]
+ s2 = [c,d]
+ s3 = [e,f,g,h,i]
+ s4 = [j,k]
+ s5 = [l,m]
+
+
+initial_world = ([Empty,s1,s2,Empty,s3,Empty,Empty,s4,Empty,s5],Clear)
+
+--FINAL WORLD CREATION
+s1 = [a,b,c]
+s2 = [b,d]
+s3 = [e,f,h,i]
+s4 = [g,j,k]
+s5 = [m,l]
+
+final_world = ([Empty,s1,s2,Empty,s3,Empty,Empty,s4,Empty,s5],Clear)
+
+
+--PLANNER
 planner :: ([Stack], Maybe Block) -> ([Stack], Maybe Block) -> [([Stack], Maybe Block)]
            -> [[(([Stack], Maybe Block), Plan)]] -> [(([Stack], Maybe Block), Plan)] -> Plan
 --lan worldInit worldEnd = plan [] [[(World, Plan)]] []
