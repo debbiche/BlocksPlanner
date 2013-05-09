@@ -5,32 +5,27 @@ import Data.Maybe
 import Data.String
 import Control.Monad.State
 
-data Shape = Square | Rectangle | Pyramid | Ball | Box
-           deriving (Show, Eq)
+data Shape = Square | Rectangle | Pyramid |
+             Ball | Box deriving (Show, Eq)
                     
-data Color = Red | Black | Blue | Green | Yellow | White
-           deriving (Show, Eq)
+data Color = Red | Black | Blue |
+             Green | Yellow | White deriving (Show, Eq)
 
-data Size = Large | Medium | Small | Tall | Wide
-          deriving (Show, Eq)
+data Size = Large | Medium |
+            Small | Tall | Wide deriving (Show, Eq)
                    
-data Block = Block Shape Size Color 
-           deriving (Show, Eq)
+data Block = Block Shape Size Color deriving (Show, Eq)
 
-type Grabber = Maybe Block
-    --        deriving (Show, Eq)
+data Grabber = Clear | Grabber Block deriving (Show, Eq)
 
-type Stack = [Maybe Block]
-       --    deriving (Show, Eq)
+data Stack = Empty | Stack [Block] deriving (Show, Eq)
                     
-data World = World ([Stack], Grabber)
-           deriving (Show, Eq)
+data World = World (Stack, Grabber) deriving (Show, Eq)
 
-type Plan = [(String, Int)] -- consider changing to action
+type Plan = [(String, Int)] -- consider changing to actio
         --  deriving(Show)
 
--- A world = ([Stack], Grabber)
-
+-- (String, Int) = action
 
 
 planner :: ([Stack], Maybe Block) -> ([Stack], Maybe Block) -> [([Stack], Maybe Block)]
