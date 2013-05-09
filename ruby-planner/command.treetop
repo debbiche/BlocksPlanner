@@ -1,0 +1,74 @@
+grammar Command
+  rule root
+    (exp)* <Root>
+  end
+  rule exp
+    '(' space? body space? ')'
+  end
+
+  rule body
+    (command / qualifier / thatis / position / block)
+  end
+
+  rule command
+    (take / put / move)
+  end
+
+  rule take
+    "take" space? exp <Take>
+  end
+
+  rule put
+    "put" space? exp <Put>
+  end
+
+  rule move
+    "move" space? exp space? exp <Move>
+  end
+
+  rule thing
+    space? qualifier space? (block / exp )
+  end
+
+  rule qualifier
+    ("the" <Qualifier> / "any" <Qualifier>/ "all" <Qualifier>) space? exp
+  end
+
+  rule position
+    preposition space? exp
+  end
+
+  rule preposition
+    ("beside" <Preposition> /
+     "leftof" <Preposition> /
+     "righto" <Preposition> /
+     "above " <Preposition> /
+     "ontop " <Preposition> /
+     "under " <Preposition> /
+     "inside" <Preposition>)
+  end
+
+  rule thatis
+    "thatis" space? exp space? exp
+  end
+
+  rule block
+    "block" space? form space? size space? color <Block>
+  end
+
+  rule form
+    ("square" <Form> / "rectangle" <Form> / "pyramid" <Form> / "ball" <Form> / "box" <Form> / "_" <AnyForm>)
+  end
+
+  rule size
+    ("large" <Size> / "medium" <Size> / "small" <Size> / "tall" <Size> / "wide" <Size> / "_" <AnySize>)
+  end
+
+  rule color
+    ("red" <Color> / "black" <Color> / "blue" <Color> / "green" <Color> / "yellow" <Color> / "white" <Color> / "_" <AnyColor>)
+  end
+
+  rule space
+    [\s]+
+  end
+end
