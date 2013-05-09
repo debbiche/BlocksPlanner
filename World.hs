@@ -17,26 +17,24 @@ data Size = Large | Medium | Small | Tall | Wide
 data Block = Block Shape Size Color 
            deriving (Show, Eq)
 
-data Grabber = Nothing | Grabber Block
-             deriving (Show, Eq)
+type Grabber = Maybe Block
+    --        deriving (Show, Eq)
 
-data Stack =  Empty | Stack [Block]
+data Stack = Stack [Block]
            deriving (Show, Eq)
                     
-data World =  World [Stack] Grabber
+data World = World ([Stack], Grabber)
            deriving (Show, Eq)
 
 type Plan = [(String, Int)] -- consider changing to action
         --  deriving(Show)
 
-type GrabberState = (Bool, Grabber)
-
---blankWorld :: World
---blankWorld = World $ replicate 10 (Empty Nothing)
+-- A world = ([Stack], Grabber)
 
 
 
-planner :: World -> World -> [World] -> [[(World, Plan)]] -> [(World, Plan)] -> Plan
+planner :: ([Stack], Maybe Block) -> ([Stack], Maybe Block) -> [([Stack], Maybe Block)]
+           -> [[(([Stack], Maybe Block), Plan)]] -> [(([Stack], Maybe Block), Plan)] -> Plan
 --lan worldInit worldEnd = plan [] [[(World, Plan)]] []
 planner world1 world2 acc [] [] = (error "Planner called with empty lists")
 planner world1 world2 acc (((w, plan):xs):xss) stack1
@@ -46,10 +44,11 @@ planner world1 world2 acc (((w, plan):xs):xss) stack1
 planner world1 world2 acc ([]:xss) stack1 = planner world1 world2 acc xss stack1
 planner world1 world2 acc [[]] stack1 = planner world1 world2 acc [[]] (reverse stack1) 
 
-build_plan :: World -> Plan -> [(World, Plan)]
+build_plan :: ([Stack], Maybe Block) -> Plan -> [(([Stack], Maybe Block), Plan)]
 build_plan  world plan = build_plan' world plan [] possible_action
 
-build_plan' :: World -> Plan -> [(World, Plan)] -> Plan -> [(World, Plan)]
+build_plan' :: ([Stack], Maybe Block) -> Plan -> [(([Stack], Maybe Block), Plan)]
+               -> Plan -> [(([Stack], Maybe Block), Plan)]
 build_plan' world plan acc []              = acc
 build_plan' world plan acc (action:actions)
   | is_allowed == True = build_plan' world plan ((new_world, (action:plan)):acc) actions
@@ -60,23 +59,24 @@ build_plan' world plan acc (action:actions)
 possible_action :: Plan
 possible_action =  [(y,x)| x <- [1..10], y <- ["pick", "drop"]]
 
-execute :: World -> (String, Int) -> (World, Bool)
+execute :: ([Stack], Maybe Block) -> (String, Int) -> (([Stack], Maybe Block), Bool)
 execute world ("pick", column) = pick world column
 execute world ("drop", column) = dropp world column
 
-getState :: State GrabberState Grabber
-getState = do
-  (_, score) <- get
-  return score
-
---setState :: Bool -> Grabber -> State GrabberState Grabber
---setState bool state = do
- -- put (bool, state)
+pick ::([Stack], Maybe Block) -> Int -> (([Stack], Maybe Block), Bool)
+pick (world, Nothing) column = ((new_world, Just new_grabber), True) -- dummy
+  where
+    new_world   = (world !! column) !!= (0, Nothing) -- make first elem of column empty
+    new_grabber = (world !! column) !! 0 
+pick (world, grabber) column = ((world, grabber), False)
 
 
-dropp :: World -> Int ->(World, Bool)
-dropp world column = (world, True) -- dummy
+dropp :: ([Stack], Maybe Block) -> Int -> (([Stack], Maybe Block), Bool)
+dropp (world, grabber) column = ((world, grabber), True) -- dummy
 
 
-pick :: World -> Int ->(World, Bool)
-pick world column = (world, True) -- dummy
+-- Updates the ith element in a list with v    
+(!!=) :: [a] -> (Int ,a) -> [a]
+(x:xs) !!= (0,el) = (el:xs)
+(x:xs) !!= (n,el) = (x:( xs !!= (n-1,el))) 
+
