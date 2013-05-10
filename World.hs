@@ -18,19 +18,17 @@ data Block = Block Shape Size Color deriving (Show, Eq)
 
 data Grabber = Clear | Grabber Block deriving (Show, Eq)
 
-data Stack = Empty | Stack [Block] deriving (Show, Eq)
+--data Stack   = Empty | Stack [Block] deriving (Show, Eq)
                     
-data World = World (Stack, Grabber) deriving (Show, Eq)
+newtype World = World ([[Block]], Grabber) deriving (Show, Eq)
 
 type Plan = [(String, Int)] -- consider changing to actio
-        --  deriving(Show)
 
 -- (String, Int) = action
 
 
-planner :: ([Stack], Maybe Block) -> ([Stack], Maybe Block) -> [([Stack], Maybe Block)]
-           -> [[(([Stack], Maybe Block), Plan)]] -> [(([Stack], Maybe Block), Plan)] -> Plan
---lan worldInit worldEnd = plan [] [[(World, Plan)]] []
+planner :: World -> World -> [World]
+           -> [[(World, Plan)]] -> [(World, Plan)] -> Plan
 planner world1 world2 acc [] [] = (error "Planner called with empty lists")
 planner world1 world2 acc (((w, plan):xs):xss) stack1
   | world1 == world2 = reverse plan
@@ -39,11 +37,11 @@ planner world1 world2 acc (((w, plan):xs):xss) stack1
 planner world1 world2 acc ([]:xss) stack1 = planner world1 world2 acc xss stack1
 planner world1 world2 acc [[]] stack1 = planner world1 world2 acc [[]] (reverse stack1) 
 
-build_plan :: ([Stack], Maybe Block) -> Plan -> [(([Stack], Maybe Block), Plan)]
+build_plan :: World -> Plan -> [(World, Plan)]
 build_plan  world plan = build_plan' world plan [] possible_action
 
-build_plan' :: ([Stack], Maybe Block) -> Plan -> [(([Stack], Maybe Block), Plan)]
-               -> Plan -> [(([Stack], Maybe Block), Plan)]
+build_plan' :: World -> Plan -> [(World, Plan)]
+               -> Plan -> [(World, Plan)]
 build_plan' world plan acc []              = acc
 build_plan' world plan acc (action:actions)
   | is_allowed == True = build_plan' world plan ((new_world, (action:plan)):acc) actions
@@ -54,37 +52,39 @@ build_plan' world plan acc (action:actions)
 possible_action :: Plan
 possible_action =  [(y,x)| x <- [1..10], y <- ["pick", "drop"]]
 
-execute :: ([Stack], Maybe Block) -> (String, Int) -> (([Stack], Maybe Block), Bool)
+execute :: World -> (String, Int) -> (World, Bool)
 execute world ("pick", column) = pick world column
 execute world ("drop", column) = dropp world column
 
-pick ::([Stack], Maybe Block) -> Int -> (([Stack], Maybe Block), Bool)
-pick (world, Nothing) column = ((new_world, new_grabber), True) -- dummy
+pick :: World -> Int -> (World, Bool)
+pick (World (world, Clear)) column = (World (new_world, Grabber new_grabber), True) -- dummy
   where
-    new_world   = world !!= (column, new_column) -- make first elem of column empty
-    new_grabber = (world !! column) !! 0
-    new_column  = (get_stack world column) !!= (0, Nothing)
-pick (world, grabber) column = ((world, grabber), False)
+    new_world   = (world !!= (column, new_column)) -- make first elem of column empty
+    new_grabber = head (get_stack world column) -- get the block to pick 
+    new_column  = tail (get_stack world column) -- remove block from column 
+pick (World (world, grabber)) column = (World (world, grabber), False)
+ 
 
+dropp :: World -> Int -> (World, Bool)
+dropp (World (world, Clear)) column = (World (world, Clear), False) -- Nothing to drop
+dropp (World (world, block)) column = (World (new_world, block) ,True)
+   where
+     new_world      = world !!= (column, new_column)
+     new_column     = current_column ++ [(grabber_to_block block)]
+     --Just index     = elemIndex Nothing current_column
+     current_column = get_stack world column -- column to drop on
 
-dropp :: ([Stack], Maybe Block) -> Int -> (([Stack], Maybe Block), Bool)
-dropp (world, Nothing) column = ((world, Nothing), False) -- Nothing to drop
-dropp (world, Just block) column = ((new_world, Just block) ,True)
-  where
-    new_world      = world !!= (column, new_column)
-    new_column     = current_column !!= (index, Just block)
-    Just index     = elemIndex Nothing current_column
-    current_column = get_stack world column -- column to drop on
-    
+grabber_to_block :: Grabber -> Block
+grabber_to_block (Grabber (Block x y z)) = (Block x y z)
 
 
 -- Updates the ith element in a list with v    
 (!!=) :: [a] -> (Int ,a) -> [a]
 (x:xs) !!= (0,el) = (el:xs)
-(x:xs) !!= (n,el) = (x:( xs !!= (n-1,el))) 
+(x:xs) !!= (n,el) = (x:( xs !!= (n-1,el)))
+ 
 
-
-get_stack :: [Stack] -> Int -> Stack
+get_stack :: [[Block]] -> Int -> [Block]
 get_stack stack col = get_stack' stack col 0
   where
     get_stack' [] _ acc = (error "Invalid Stack Column")
