@@ -105,18 +105,18 @@ pick (World (world, grabber)) column
     new_grabber = head curr_column -- get the block to pick 
     new_column  = tail curr_column -- remove block from column
     curr_column = get_stack world column
- 
 
 dropp :: World -> Int -> (World, Bool)
-dropp (World (world, Clear)) column = (World (world, Clear), False) -- Nothing to drop
-dropp (World (world, block)) column = (World (new_world, block) ,True)
+dropp (World (world, block)) column
+  | block == Clear = (World (world, block), False) -- Nothing to drop
+  | otherwise      = (World (new_world, Clear) ,True)                     
    where
      new_world      = world !!= (column, new_column)
      new_column     = current_column ++ [(grabber_to_block block)]
      current_column = get_stack world column -- column to drop on
 
 grabber_to_block :: Grabber -> Block
-grabber_to_block (Grabber (Block x y z)) = (Block x y z)
+grabber_to_block (Grabber (Block x y z)) = Block x y z
 
 
 -- Updates the ith element in a list with v    
@@ -131,3 +131,8 @@ get_stack blocks col = blocks !! col
 
 get_blocks :: World -> [[Block]]
 get_blocks (World (blocks, _)) = blocks
+
+picked :: World
+picked = world
+  where
+    (world, _) = pick initial_world 1
