@@ -153,11 +153,11 @@ world_size (World (blocks, _))
 
 --Pyramids and balls cannot support anything (gen function)
 shape_not_top :: World -> Shape -> Bool
-shape_not_top world shape = not $ or check_pyramid_pos
+shape_not_top world shape = not $ or check_shape_pos
  where
    (World (blocks, _)) = world
-   check_pyramid_pos   = map pos_pyramid ignore_first_blocks 
-   pos_pyramid column  = any (\x -> is_shape x shape) column
+   check_shape_pos   = map pos_shape ignore_first_blocks 
+   pos_shape column  = any (\x -> is_shape x shape) column
    ignore_first_blocks = map tail (filter (not . null) blocks) -- disrecard 1st pos
 
 --Size = Large | Medium | Small | Tall | Wide
