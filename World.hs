@@ -112,8 +112,8 @@ dropp (World (world, block)) column
   | otherwise      = (World (new_world, Clear) ,True)                     
    where
      new_world      = world !!= (column, new_column)
-     new_column     = current_column ++ [(grabber_to_block block)]
-     current_column = get_stack world column -- column to drop on
+     new_column     = curr_column ++ [(grabber_to_block block)]
+     curr_column    = get_stack world column -- column to drop on
 
 grabber_to_block :: Grabber -> Block
 grabber_to_block (Grabber (Block x y z)) = Block x y z
@@ -126,7 +126,7 @@ grabber_to_block (Grabber (Block x y z)) = Block x y z
  
 
 get_stack :: [[Block]] -> Int -> [Block]
-get_stack blocks col = blocks !! col 
+get_stack blocks col = blocks !! col
 
 
 get_blocks :: World -> [[Block]]
@@ -136,3 +136,48 @@ picked :: World
 picked = world
   where
     (world, _) = pick initial_world 1
+
+is_valid_world :: World -> Bool
+is_valid_world world = and rules
+ where
+   (World (blocks, grabber)) = world
+   rules = [world_size world,shape_not_top world Pyramid,
+            shape_not_top world Ball]
+-- Rules
+
+-- Size of a world can't be more than 10
+world_size :: World -> Bool
+world_size (World (blocks, _))
+ | length blocks > 10 = False
+ | otherwise          = True
+
+--Pyramids and balls cannot support anything (gen function)
+shape_not_top :: World -> Shape -> Bool
+shape_not_top world shape = not $ or check_pyramid_pos
+ where
+   (World (blocks, _)) = world
+   check_pyramid_pos   = map pos_pyramid ignore_first_blocks 
+   pos_pyramid column  = any (\x -> is_shape x shape) column
+   ignore_first_blocks = map tail (filter (not . null) blocks) -- disrecard 1st pos
+
+--Size = Large | Medium | Small | Tall | Wide
+
+
+--  Very naive compare method
+bigger_eq :: Size -> Size -> Bool
+bigger_eq s1 s2
+ | s1 == s2 = True
+bigger_eq Large  _ = True
+bigger_eq Medium _ = True
+bigger_eq Small  _ = True
+bigger_eq Tall   _ = True
+bigger_eq Wide   _ = True
+
+
+-- HELPER -- Check if a block is of a specific shape
+is_shape :: Block -> Shape -> Bool
+is_shape (Block x _ _) shape
+  | x == shape = True
+  | otherwise  = False
+
+
