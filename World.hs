@@ -46,21 +46,22 @@ m = Block Ball Medium Blue
 empty :: [Block]    
 empty = []
 
-s1 =[a,b]
-s2 = [c,d]
-s3 = [e,f,g,h,i]
-s4 = [j,k]
-s5 = [l,m]
+-- Reverse is needed for now to reflect design
+s1 = reverse [a,b]
+s2 = reverse [c,d]
+s3 = reverse [e,f,g,h,i]
+s4 = reverse [j,k]
+s5 = reverse [l,m]
 
 initial_world :: World
 initial_world = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
 
 --FINAL WORLD CREATION
-s11 = [a,b,c]
-s22 = [b,d]
-s33 = [e,f,h,i]
-s44 = [g,j,k]
-s55 = [m,l]
+s11 = reverse [a,b,c]
+s22 = reverse [b,d]
+s33 = reverse [e,f,h,i]
+s44 = reverse [g,j,k]
+s55 = reverse [m,l]
 
 final_world :: World
 final_world = World ([empty,s11,s22,empty,s33,empty,empty,s44,empty,s55],Clear)
@@ -95,12 +96,15 @@ execute world ("pick", column) = pick world column
 execute world ("drop", column) = dropp world column
 
 pick :: World -> Int -> (World, Bool)
-pick (World (world, Clear)) column = (World (new_world, Grabber new_grabber), True) -- dummy
+pick (World (world, grabber)) column
+  | null curr_column = (error "Column is empty")
+  | grabber == Clear = (World (new_world, Grabber new_grabber), True)
+  | otherwise        = (World (world, grabber), False) -- consider throwing excep
   where
     new_world   = (world !!= (column, new_column)) -- make first elem of column empty
-    new_grabber = head (get_stack world column) -- get the block to pick 
-    new_column  = tail (get_stack world column) -- remove block from column
-pick (World (world, grabber)) column = (World (world, grabber), False)
+    new_grabber = head curr_column -- get the block to pick 
+    new_column  = tail curr_column -- remove block from column
+    curr_column = get_stack world column
  
 
 dropp :: World -> Int -> (World, Bool)
