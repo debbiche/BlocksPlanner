@@ -42,19 +42,18 @@ l = Block Box Medium Red
 m = Block Ball Medium Blue
 
 
---planner :: World -> World -> [World]
---           -> [[(World, Plan)]] -> [(World, Plan)] -> Plan
-
  --INITIAL WORLD CREATION
+empty :: [Block]    
 empty = []
+
 s1 =[a,b]
 s2 = [c,d]
 s3 = [e,f,g,h,i]
 s4 = [j,k]
 s5 = [l,m]
 
-
-initial_world = ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
+initial_world :: World
+initial_world = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
 
 --FINAL WORLD CREATION
 s11 = [a,b,c]
@@ -63,8 +62,8 @@ s33 = [e,f,h,i]
 s44 = [g,j,k]
 s55 = [m,l]
 
-final_world = ([empty,s11,s22,empty,s33,empty,empty,s44,empty,s55],Clear)
-
+final_world :: World
+final_world = World ([empty,s11,s22,empty,s33,empty,empty,s44,empty,s55],Clear)
 
 --PLANNER
 planner :: World -> World -> [World] -> [[(World, Plan)]] -> [(World, Plan)] -> Plan
@@ -74,7 +73,7 @@ planner world1 world2 acc (((w, plan):xs):xss) stack1
   | w `elem` acc     = planner world1 world2 acc (xs:xss) stack1 
   | otherwise        = planner w world2 (w:acc) (xs:xss) ((build_plan w plan)++stack1)
 planner world1 world2 acc ([]:xss) stack1 = planner world1 world2 acc xss stack1
-planner world1 world2 acc [] stack1 = planner world1 world2 acc [] (reverse stack1) 
+planner world1 world2 acc [] stack1 = planner world1 world2 acc [] (reverse stack1)
 
 build_plan :: World -> Plan -> [(World, Plan)]
 build_plan  world plan = build_plan' world plan [] possible_action
@@ -100,7 +99,7 @@ pick (World (world, Clear)) column = (World (new_world, Grabber new_grabber), Tr
   where
     new_world   = (world !!= (column, new_column)) -- make first elem of column empty
     new_grabber = head (get_stack world column) -- get the block to pick 
-    new_column  = tail (get_stack world column) -- remove block from column 
+    new_column  = tail (get_stack world column) -- remove block from column
 pick (World (world, grabber)) column = (World (world, grabber), False)
  
 
@@ -123,9 +122,8 @@ grabber_to_block (Grabber (Block x y z)) = (Block x y z)
  
 
 get_stack :: [[Block]] -> Int -> [Block]
-get_stack stack col = get_stack' stack col 0
-  where
-    get_stack' [] _ acc = (error "Invalid Stack Column")
-    get_stack' (x:xs) col acc
-      | col == acc = x
-      | otherwise  = get_stack' xs col acc
+get_stack blocks col = blocks !! col 
+
+
+get_blocks :: World -> [[Block]]
+get_blocks (World (blocks, _)) = blocks
