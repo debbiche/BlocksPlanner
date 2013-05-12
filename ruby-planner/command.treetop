@@ -1,6 +1,6 @@
 grammar Command
   rule root
-    (exp)* <Root>
+    '(' space? command ')' <Root> 
   end
   rule exp
     '(' space? body space? ')'
@@ -23,7 +23,7 @@ grammar Command
   end
 
   rule move
-    "move" space? exp space? exp <Move>
+    "move" space? from:exp space? to:exp <Move>
   end
 
   rule thing
@@ -35,21 +35,21 @@ grammar Command
   end
 
   rule position
-    preposition space? exp
+    preposition space? exp <Position>
   end
 
   rule preposition
-    ("beside" <Preposition> /
-     "leftof" <Preposition> /
-     "righto" <Preposition> /
-     "above " <Preposition> /
-     "ontop " <Preposition> /
-     "under " <Preposition> /
-     "inside" <Preposition>)
+    ("beside"  /
+     "leftof"  /
+     "righto"  /
+     "above "  /
+     "ontop "  /
+     "under "  /
+     "inside" )
   end
 
   rule thatis
-    "thatis" space? exp space? exp
+    "thatis" space? exp space? exp <Thatis> 
   end
 
   rule block

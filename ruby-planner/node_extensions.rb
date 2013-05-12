@@ -39,11 +39,7 @@ module Command
   end
 
   class Root < Treetop::Runtime::SyntaxNode
-    def find(nodeType)
-    end
-    def action
 
-    end
   end
 
   class Thatis < Treetop::Runtime::SyntaxNode
@@ -52,12 +48,30 @@ module Command
   class Preposition < Treetop::Runtime::SyntaxNode
   end
 
-  class Take < Treetop::Runtime::SyntaxNode
-  end
-  
-  class Move < Treetop::Runtime::SyntaxNode
+  class Position < Treetop::Runtime::SyntaxNode
   end
 
-  class Put < Treetop::Runtime::SyntaxNode
+  class Action < Treetop::Runtime::SyntaxNode
+  end
+
+  class Take < Action
+    def name
+      "take"
+    end
+  end
+  
+  class Move < Action
+    def name
+      "move"
+    end
+    def source
+
+    end
+  end
+
+  class Put < Action
+    def name
+      "put"
+    end
   end
 end
