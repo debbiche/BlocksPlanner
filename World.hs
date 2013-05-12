@@ -3,7 +3,6 @@ module World where
 import Data.List
 import Data.Maybe
 import Data.String
-import Control.Monad.State
 
 data Shape = Square | Rectangle | Pyramid |
              Ball | Box deriving (Show, Eq)
@@ -21,21 +20,61 @@ data Grabber = Clear | Grabber Block deriving (Show, Eq)
 --data Stack   = Empty | Stack [Block] deriving (Show, Eq)
                     
 newtype World = World ([[Block]], Grabber) deriving (Show, Eq)
+--data World = World ([Stack], Grabber) deriving (Show, Eq)
 
 type Plan = [(String, Int)] -- consider changing to actio
 
 -- (String, Int) = action
 
+--SHAPES CREATION
+a = Block Rectangle Tall Blue
+b = Block Ball Small White
+c = Block Square Large Red
+d = Block Pyramid Large Green
+e = Block Box Large White
+f = Block Rectangle Wide Black
+g = Block Rectangle Wide Blue
+h = Block Rectangle Wide Red
+i = Block Pyramid Medium Yellow
+j = Block Box Large Red
+k = Block Ball Small Yellow
+l = Block Box Medium Red
+m = Block Ball Medium Blue
 
-planner :: World -> World -> [World]
-           -> [[(World, Plan)]] -> [(World, Plan)] -> Plan
+
+--planner :: World -> World -> [World]
+--           -> [[(World, Plan)]] -> [(World, Plan)] -> Plan
+
+ --INITIAL WORLD CREATION
+empty = []
+s1 =[a,b]
+s2 = [c,d]
+s3 = [e,f,g,h,i]
+s4 = [j,k]
+s5 = [l,m]
+
+
+initial_world = ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
+
+--FINAL WORLD CREATION
+s11 = [a,b,c]
+s22 = [b,d]
+s33 = [e,f,h,i]
+s44 = [g,j,k]
+s55 = [m,l]
+
+final_world = ([empty,s11,s22,empty,s33,empty,empty,s44,empty,s55],Clear)
+
+
+--PLANNER
+planner :: World -> World -> [World] -> [[(World, Plan)]] -> [(World, Plan)] -> Plan
 planner world1 world2 acc [] [] = (error "Planner called with empty lists")
 planner world1 world2 acc (((w, plan):xs):xss) stack1
   | world1 == world2 = reverse plan
   | w `elem` acc     = planner world1 world2 acc (xs:xss) stack1 
   | otherwise        = planner w world2 (w:acc) (xs:xss) ((build_plan w plan)++stack1)
 planner world1 world2 acc ([]:xss) stack1 = planner world1 world2 acc xss stack1
-planner world1 world2 acc [[]] stack1 = planner world1 world2 acc [[]] (reverse stack1) 
+planner world1 world2 acc [] stack1 = planner world1 world2 acc [] (reverse stack1) 
 
 build_plan :: World -> Plan -> [(World, Plan)]
 build_plan  world plan = build_plan' world plan [] possible_action
@@ -71,7 +110,6 @@ dropp (World (world, block)) column = (World (new_world, block) ,True)
    where
      new_world      = world !!= (column, new_column)
      new_column     = current_column ++ [(grabber_to_block block)]
-     --Just index     = elemIndex Nothing current_column
      current_column = get_stack world column -- column to drop on
 
 grabber_to_block :: Grabber -> Block
