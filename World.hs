@@ -98,7 +98,7 @@ execute world ("drop", column) = dropp world column
 pick :: World -> Int -> (World, Bool)
 pick (World (world, grabber)) column
   | null curr_column = (error "Column is empty")
-  | grabber == Clear = (World (new_world, Grabber new_grabber), True)
+  | grabber == Clear = (World (new_world, Grabber new_grabber), is_Valid (World (new_world, Grabber new_grabber)))
   | otherwise        = (World (world, grabber), False) -- consider throwing excep
   where
     new_world   = (world !!= (column, new_column)) -- make first elem of column empty
@@ -108,9 +108,9 @@ pick (World (world, grabber)) column
 
 dropp :: World -> Int -> (World, Bool)
 dropp (World (world, block)) column
-  | block == Clear = (World (world, block), False) -- Nothing to drop
-  | otherwise      = (World (new_world, Clear) ,True)                     
-   where
+  | block == Clear = (World (world, block), False) -- Nothing to drop, exep?
+  | otherwise      = (World (new_world, Clear), is_Valid (World (new_world, Clear)))     
+   where     
      new_world      = world !!= (column, new_column)
      new_column     = curr_column ++ [(grabber_to_block block)]
      curr_column    = get_stack world column -- column to drop on
@@ -123,8 +123,8 @@ grabber_to_block (Grabber (Block x y z)) = Block x y z
 (!!=) :: [a] -> (Int ,a) -> [a]
 (x:xs) !!= (0,el) = (el:xs)
 (x:xs) !!= (n,el) = (x:( xs !!= (n-1,el)))
- 
 
+                    
 get_stack :: [[Block]] -> Int -> [Block]
 get_stack blocks col = blocks !! col
 
@@ -137,8 +137,9 @@ picked = world
   where
     (world, _) = pick initial_world 1
 
-is_valid_world :: World -> Bool
-is_valid_world world = and rules
+-- Checks whether a world is valid or not
+is_Valid :: World -> Bool
+is_Valid world = and rules
  where
    (World (blocks, grabber)) = world
    rules = [world_size world,shape_not_top world Pyramid,
