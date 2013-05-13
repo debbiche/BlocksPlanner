@@ -41,6 +41,12 @@ k = Block Ball Small Yellow
 l = Block Box Medium Red
 m = Block Ball Medium Blue
 
+test = s2
+  where
+    (s1, _) = pick initial_world 1 
+    (s2, _) = dropp s1 0
+    (s3, _) = pick s2 0
+    (s4, _) = dropp s3 1
 
  --INITIAL WORLD CREATION
 empty :: [Block]    
@@ -54,7 +60,9 @@ s4 = reverse [j,k]
 s5 = reverse [l,m]
 
 initial_world :: World
-initial_world = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
+--initial_world = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
+--initial_world = World ([empty,s1,s2],Clear)
+initial_world = World ([[Block Rectangle Large Blue],[Block Rectangle Large Red],empty],Clear)
 
 --FINAL WORLD CREATION
 s11 = reverse [a,b,c]
@@ -64,24 +72,34 @@ s44 = reverse [g,j,k]
 s55 = reverse [m,l]
 
 final_world :: World
-final_world = World ([empty,s11,s22,empty,s33,empty,empty,s44,empty,s55],Clear)
+--final_world = World ([empty,s11,s22,empty,s33,empty,empty,s44,empty,s55],Clear)
+--final_world = World ([s11,empty,s22],Clear)
+final_world = World ([[Block Rectangle Large Red], empty,[Block Rectangle Large Blue]],Clear)
+
+cc :: World -> World -> Bool
+cc w1 w2 = b1 == b2
+  where
+    (World (b1, _)) = w1
+    (World (b2, _)) = w2
 
 --PLANNER
-planner :: World -> World -> [World] -> [[(World, Plan)]] -> [(World, Plan)] -> Plan
-planner world1 world2 acc [] [] = (error "Planner called with empty lists")
-planner world1 world2 acc (((w, plan):xs):xss) stack1
-  | world1 == world2 = reverse plan
-  | w `elem` acc     = planner world1 world2 acc (xs:xss) stack1 
-  | otherwise        = planner w world2 (w:acc) (xs:xss) ((build_plan w plan)++stack1)
-planner world1 world2 acc ([]:xss) stack1 = planner world1 world2 acc xss stack1
-planner world1 world2 acc [] stack1 = planner world1 world2 acc [] (reverse stack1)
+--         init     final    acc        lists node on same level  Next level brothers
+planner :: World -> World -> [World] -> [[(World, Plan)]] -> [[(World, Plan)]] -> Plan
+--planner world1 world2 acc [] c = (error "Planner called with empty lists")
+planner w1 w2 acc (((w, plan):xs):xss) stack1
+  | (cc w w2) == True  = reverse plan -- base case
+  | w `elem` acc     = planner w1 w2 acc (xs:xss) stack1 -- already visited this world, ignore it
+  | otherwise        = planner w w2 (w:acc) (xs:xss) ((build_plan w plan):stack1)
+planner w1 w2 acc ([]:xss) stack1 = planner w1 w2 acc xss stack1 -- No brothers 
+planner w1 w2 acc [] stack1 = planner w1 w2 acc (reverse stack1) [] -- the next level brothers become actual brothers
+
 
 build_plan :: World -> Plan -> [(World, Plan)]
 build_plan  world plan = build_plan' world plan [] possible_action
 
 build_plan' :: World -> Plan -> [(World, Plan)]
                -> Plan -> [(World, Plan)]
-build_plan' world plan acc []              = acc
+build_plan' world plan acc []  = acc
 build_plan' world plan acc (action:actions)
   | is_allowed == True = build_plan' world plan ((new_world, (action:plan)):acc) actions
   | otherwise          = build_plan' world plan acc actions
@@ -89,7 +107,7 @@ build_plan' world plan acc (action:actions)
     (new_world, is_allowed) = execute world action
 
 possible_action :: Plan
-possible_action =  [(y,x)| x <- [1..10], y <- ["pick", "drop"]]
+possible_action =  [(y,x)| x <- [0..2], y <- ["pick", "drop"]]
 
 execute :: World -> (String, Int) -> (World, Bool)
 execute world ("pick", column) = pick world column
@@ -97,9 +115,9 @@ execute world ("drop", column) = dropp world column
 
 pick :: World -> Int -> (World, Bool)
 pick (World (world, grabber)) column
-  | null curr_column = (error "Column is empty")
-  | grabber == Clear = (World (new_world, Grabber new_grabber), is_Valid (World (new_world, Grabber new_grabber)))
-  | otherwise        = (World (world, grabber), False) -- consider throwing excep
+  | null curr_column = (World (world, grabber), False)
+  | grabber == Clear = (World (new_world, Grabber new_grabber), True)
+  | otherwise        = (World (world, grabber), False)
   where
     new_world   = (world !!= (column, new_column)) -- make first elem of column empty
     new_grabber = head curr_column -- get the block to pick 
@@ -109,10 +127,10 @@ pick (World (world, grabber)) column
 dropp :: World -> Int -> (World, Bool)
 dropp (World (world, block)) column
   | block == Clear = (World (world, block), False) -- Nothing to drop, exep?
-  | otherwise      = (World (new_world, Clear), is_Valid (World (new_world, Clear)))     
+  | otherwise      = (World (new_world, Clear), True)     
    where     
      new_world      = world !!= (column, new_column)
-     new_column     = curr_column ++ [(grabber_to_block block)]
+     new_column     = [(grabber_to_block block)] ++ curr_column 
      curr_column    = get_stack world column -- column to drop on
 
 grabber_to_block :: Grabber -> Block
@@ -165,12 +183,12 @@ shape_not_top world shape = not $ or check_shape_pos
 --Size = Large | Medium | Small | Tall | Wide
 
 -- not tested yet
-check_size :: World -> Bool
-check_size world = and [and x | x <- sizes] 
-  where
-    (World (blocks, _)) = world
-    sizes =  [[compare_blocks stack pos| pos <- pairs_lists] | stack <- blocks]
-    pairs_lists = [(x,x+1)|  stack <- blocks, x <- [0 .. (length stack)-2]] -- rem []s
+-- check_size :: World -> Bool
+-- check_size world = and [and x | x <- sizes] 
+--   where
+--     (World (blocks, _)) = world
+--     sizes =  [[map (compare_blocks stack) pos| pos <- pairs_lists] | stack <- blocks]
+--     pairs_lists =  [[(x,x+1) | x <- [0 .. (length stack)-2] ] |  stack <- blocks]-- rem []s
 
 
 compare_blocks :: [Block] -> (Int,Int) -> Bool
@@ -180,7 +198,7 @@ compare_blocks stack (pos1, pos2) = cmp y yy
     Block xx yy zz = stack !! pos2
     
     
---  Very naive compare method
+--Very naive compare method
 cmp :: Size -> Size -> Bool
 cmp s1 s2
  | s1 == s2       = True
