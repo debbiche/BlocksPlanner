@@ -165,14 +165,19 @@ shape_not_top world shape = not $ or check_shape_pos
 
 
 --  Very naive compare method
-bigger_eq :: Size -> Size -> Bool
-bigger_eq s1 s2
- | s1 == s2 = True
-bigger_eq Large  _ = True
-bigger_eq Medium _ = True
-bigger_eq Small  _ = True
-bigger_eq Tall   _ = True
-bigger_eq Wide   _ = True
+cmp :: Size -> Size -> Bool
+cmp s1 s2
+ | s1 == s2       = True
+cmp Large  _      = True
+cmp _      Large  = False
+cmp Medium _      = True
+cmp _      Medium = False 
+cmp Small  _      = True
+cmp _      Small  = False
+cmp Wide   _      = True
+cmp _      Wide   = False
+cmp Tall   _      = True
+--cmp _      Tall   = False
 
 
 -- HELPER -- Check if a block is of a specific shape
