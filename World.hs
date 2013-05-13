@@ -132,6 +132,7 @@ get_stack blocks col = blocks !! col
 get_blocks :: World -> [[Block]]
 get_blocks (World (blocks, _)) = blocks
 
+-- for testing purposes
 picked :: World
 picked = world
   where
@@ -157,13 +158,28 @@ shape_not_top :: World -> Shape -> Bool
 shape_not_top world shape = not $ or check_shape_pos
  where
    (World (blocks, _)) = world
-   check_shape_pos   = map pos_shape ignore_first_blocks 
-   pos_shape column  = any (\x -> is_shape x shape) column
+   check_shape_pos     = map pos_shape ignore_first_blocks 
+   pos_shape column    = any (\x -> is_shape x shape) column
    ignore_first_blocks = map tail (filter (not . null) blocks) -- disrecard 1st pos
 
 --Size = Large | Medium | Small | Tall | Wide
 
+-- not tested yet
+check_size :: World -> Bool
+check_size world = and [and x | x <- sizes] 
+  where
+    (World (blocks, _)) = world
+    sizes =  [[compare_blocks stack pos| pos <- pairs_lists] | stack <- blocks]
+    pairs_lists = [(x,x+1)|  stack <- blocks, x <- [0 .. (length stack)-2]] -- rem []s
 
+
+compare_blocks :: [Block] -> (Int,Int) -> Bool
+compare_blocks stack (pos1, pos2) = cmp y yy
+  where
+    Block x  y  z  = stack !! pos1
+    Block xx yy zz = stack !! pos2
+    
+    
 --  Very naive compare method
 cmp :: Size -> Size -> Bool
 cmp s1 s2
@@ -178,7 +194,6 @@ cmp Wide   _      = True
 cmp _      Wide   = False
 cmp Tall   _      = True
 --cmp _      Tall   = False
-
 
 -- HELPER -- Check if a block is of a specific shape
 is_shape :: Block -> Shape -> Bool
