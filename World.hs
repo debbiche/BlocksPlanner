@@ -59,8 +59,8 @@ s4 = reverse [j,k]
 s5 = reverse [l,m]
 
 start_world :: World
-start_world = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
---initial_world = World ([empty,s1,s2],Clear)
+--start_world = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
+start_world = World ([empty,s1,s2],Clear)
 
 -- Returns the number of columns in the world
 cols :: Int
@@ -69,15 +69,15 @@ cols = length blocks
     (World (blocks, _)) = start_world
 
 --FINAL WORLD CREATION
-s11 = reverse [a,b,c,d]
-s22 = reverse []
+s11 = reverse [a,c,d]
+s22 = reverse [b]
 s33 = reverse [e,f]
 s44 = reverse [j,k]
 s55 = reverse [l,m]
 
 end_world :: World
-end_world = World ([empty,s11,s22,empty,s33,empty,empty,s44,empty,s55],Clear)
---final_world = World ([s11,empty,s22],Clear)
+--end_world = World ([empty,s11,s22,empty,s33,empty,empty,s44,empty,s55],Clear)
+end_world = World ([s11,empty,s22],Clear)
 
 cc :: World -> World -> Bool
 cc w1 w2 = b1 == b2
@@ -93,20 +93,20 @@ planner w1 w2 acc (((w, plan):xs):xss) stack1
   | w `elem` acc     = planner w1 w2 acc (xs:xss) stack1 -- already visited this world
   | otherwise        = planner w w2 (w:acc) (xs:xss) ((build_plan w plan):stack1)
 planner w1 w2 acc ([]:xss) stack1 = planner w1 w2 acc xss stack1 -- No brothers 
-planner w1 w2 acc [] stack1 = planner w1 w2 acc (reverse stack1) [] -- the next level brothers become actual brothers
+planner w1 w2 acc [] stack1 = planner w1 w2 acc (reverse stack1) []
 
 
 build_plan :: World -> Plan -> [(World, Plan)]
 build_plan  world plan = build_plan' world plan [] possible_action
-
-build_plan' :: World -> Plan -> [(World, Plan)]
-               -> Plan -> [(World, Plan)]
-build_plan' world plan acc []  = acc
-build_plan' world plan acc (action:actions)
-  | is_allowed == True = build_plan' world plan ((new_world, (action:plan)):acc) actions
-  | otherwise          = build_plan' world plan acc actions
-  where
-    (new_world, is_allowed) = execute world action
+ where
+   build_plan' world plan acc []  = acc
+   build_plan' world plan acc (action:actions)
+     | is_allowed = build_plan' world plan ((new_world, (action:plan)):acc) actions
+     | otherwise  = build_plan' world plan acc actions
+     where
+       (new_world, is_allowed) = execute world action
+       allowed = is_Valid new_world
+--       valid_actions = 
 
 possible_action :: Plan
 possible_action =  [(y,x)| x <- [0..(cols-1)], y <- ["pick", "drop"]]
@@ -158,21 +158,19 @@ picked = world
   where
     (world, _) = pick start_world 1
 
+check_actions :: [(World, Plan)] -> [Bool]
+check_actions [] = []
+check_actions ((world,plan):xs) = [is_Valid world] ++ check_actions xs
+
+
 -- Checks whether a world is valid or not
 is_Valid :: World -> Bool
 is_Valid world = and rules
  where
    (World (blocks, grabber)) = world
-   rules = [world_size world,shape_not_top world Pyramid,
+   rules = [shape_not_top world Pyramid,
             shape_not_top world Ball]
 -- Rules
-
--- Size of a world can't be more than 10
-world_size :: World -> Bool
-world_size (World (blocks, _))
- | length blocks > 10 = False
- | otherwise          = True
-
 --Pyramids and balls cannot support anything (gen function)
 shape_not_top :: World -> Shape -> Bool
 shape_not_top world shape = not $ or check_shape_pos
