@@ -3,6 +3,7 @@ module World where
 import Data.List
 import Data.Maybe
 import Data.String
+import Debug.Trace
 
 data Shape = Square | Rectangle | Pyramid |
              Ball | Box deriving (Show, Eq)
@@ -77,7 +78,7 @@ s55 = reverse [l,m]
 
 end_world :: World
 --end_world = World ([empty,s11,s22,empty,s33,empty,empty,s44,empty,s55],Clear)
-end_world = World ([s11,empty,s22],Clear)
+end_world = World ([s11,s22,empty],Clear)
 
 cc :: World -> World -> Bool
 cc w1 w2 = b1 == b2
@@ -87,26 +88,27 @@ cc w1 w2 = b1 == b2
 
 --PLANNER
 planner :: World -> World -> [World] -> [[(World, Plan)]] -> [[(World, Plan)]] -> Plan
---planner world1 world2 acc [] c = (error "Planner called with empty lists")
 planner w1 w2 acc (((w, plan):xs):xss) stack1
-  | (cc w w2) == True  = reverse plan -- base case
+  | (cc w w2)   = reverse plan -- base case
   | w `elem` acc     = planner w1 w2 acc (xs:xss) stack1 -- already visited this world
   | otherwise        = planner w w2 (w:acc) (xs:xss) ((build_plan w plan):stack1)
 planner w1 w2 acc ([]:xss) stack1 = planner w1 w2 acc xss stack1 -- No brothers 
 planner w1 w2 acc [] stack1 = planner w1 w2 acc (reverse stack1) []
 
+build_plan'' :: World -> Plan -> [(World, Plan)]
+build_plan'' w p =  filter check_actions list
+  where
+    list = build_plan w p
 
 build_plan :: World -> Plan -> [(World, Plan)]
 build_plan  world plan = build_plan' world plan [] possible_action
  where
-   build_plan' world plan acc []  = acc
+   build_plan' world plan acc []  = acc 
    build_plan' world plan acc (action:actions)
      | is_allowed = build_plan' world plan ((new_world, (action:plan)):acc) actions
      | otherwise  = build_plan' world plan acc actions
      where
        (new_world, is_allowed) = execute world action
-       allowed = is_Valid new_world
---       valid_actions = 
 
 possible_action :: Plan
 possible_action =  [(y,x)| x <- [0..(cols-1)], y <- ["pick", "drop"]]
@@ -158,9 +160,8 @@ picked = world
   where
     (world, _) = pick start_world 1
 
-check_actions :: [(World, Plan)] -> [Bool]
-check_actions [] = []
-check_actions ((world,plan):xs) = [is_Valid world] ++ check_actions xs
+check_actions :: (World, Plan) -> Bool
+check_actions (world,_) = is_Valid world
 
 
 -- Checks whether a world is valid or not
