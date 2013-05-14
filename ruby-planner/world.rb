@@ -1,5 +1,9 @@
+require './array_utils'
+
 class World
-  PREPOSITIONS = ["leftof", "under", "rightof", "ontop", "beside", "above"]
+  include ArrayUtils
+
+  PREPOSITIONS = ["leftof", "under", "rightof", "ontop", "beside", "above", "inside"]
   attr_reader :world, :blocks, :grabber
   def initialize(world = nil, grabber = nil)
     @grabber = grabber
@@ -42,18 +46,6 @@ class World
     self.send("is_#{preposition}", object)
   end
 
-  def any
-    return yield.first
-  end
-
-  def the
-    return yield.first
-  end
-
-  def all
-    return yield
-  end
-
   # Input block is expected to yield an array of block names
   def thatis(options)
     preposition = options[:preposition]
@@ -76,9 +68,17 @@ class World
     column_index = @world.index {|col| col.include? block_name}
   end
 
-  def with_preposition(preposition, block_name)
+  def with_preposition(args)
+    preposition = args[:preposition] || args["preposition"]
+    source_block = args[:source] || args["source"]
+    target_block = args[:target] || args["target"]
     if PREPOSITIONS.include? preposition
-      self.send(preposition, block_name)
+      # puts "sending #{preposition} #{target_block} #{source_block}"
+      self.send(preposition, source_block, target_block )
+      return true
+    else
+      raise "Could not find preposition #{preposition}"
+      return false
     end
   end
 
@@ -142,7 +142,10 @@ class World
   # Vertical operations
 
   def ontop(subject, target)
+    # puts "ran ontop #{subject}, #{target}"
     remove_block(subject)
+    # puts "removed #{subject}"
+    # puts "world is #{world}"
     target_block_position  = position_of(target)
     column = target_block_position[0]
     row = target_block_position[1] + 1
@@ -203,6 +206,11 @@ class World
     end
   end
 
+  # Ontop and inside are equivalent for now
+  def is_inside(block_name)
+    return is_ontop(block_name)
+  end
+
   # Takes a block_name, then
   #   1. Get position of block
   #   2. Yield to block, sending column index and row index
@@ -219,6 +227,7 @@ class World
 
   # Inside is equivalent to ontop (for now)
   def inside(subject, target)
+    # puts "running inside"
     ontop(subject, target)
   end
 
@@ -238,4 +247,23 @@ class World
     remove_block(block_name)
     insert_block_at_position(block_name, destination)
   end
+
+  def to_s
+    @world.inspect
+  end
+
+  def encode_world
+    output = @world.map {|col| col.join(" ")}.join(";")
+    output << ";" << grabber_to_string << ";"
+  end
+
+  def encode_block_manifest
+    output = ""
+    @blocks.map {|name, attrs| "#{attrs['form']} #{attrs['size']} #{attrs['color']}"}.join(";")
+  end
+
+  def grabber_to_string
+    output = "grabber " << (@grabber || "empty")
+  end
 end
+

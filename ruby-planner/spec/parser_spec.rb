@@ -40,9 +40,10 @@ describe Parser do
 
       it "parses the move expression correctly" do
         move_tree.command.perform(world)
-        world.grabber.should be_empty
-        world.world.should eq([[], ["b"], ["c","d"], [], ["e","f","g","h","i"], [], [], ["j","k"], [], ["l","a" "m"]])
+        world.grabber.should be_nil
+        world.world.should eq([[], ["b"], ["c","d"], [], ["e","f","g","h","i"], [], [], ["j","k"], [], ["l","a", "m"]])
       end
     end
   end
 end
+

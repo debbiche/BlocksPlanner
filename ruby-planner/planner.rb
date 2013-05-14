@@ -1,3 +1,3 @@
-class Planner
+require 'cgi'
 
-end
+HEADER = "Content-type:text/plain\r\n\r\n"

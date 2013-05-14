@@ -23,7 +23,7 @@ grammar Command
   end
 
   rule move
-    "move" space? from:exp space? to:exp <Move>
+    "move" space? from_exp:exp space? to_exp:exp <Move>
   end
 
   rule thing

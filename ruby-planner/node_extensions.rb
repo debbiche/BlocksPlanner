@@ -1,4 +1,7 @@
+require './array_utils'
+
 module Command
+  include ArrayUtils
   class Block < Treetop::Runtime::SyntaxNode
     def get_blocks(world)
       world.with_properties(properties)
@@ -11,19 +14,19 @@ module Command
       {form: _form, color: _color, size: _size}
     end
   end
-  
+
   class Form < Treetop::Runtime::SyntaxNode
   end
-  
+
   class Size < Treetop::Runtime::SyntaxNode
   end
-  
+
   class Color < Treetop::Runtime::SyntaxNode
   end
-  
+
   class Expression < Treetop::Runtime::SyntaxNode
   end
-  
+
   class Body < Treetop::Runtime::SyntaxNode
   end
 
@@ -71,7 +74,7 @@ module Command
       end
     end
 
-    def position 
+    def position
       position_exp.body
     end
   end
@@ -109,18 +112,32 @@ module Command
       exp.body
     end
   end
-  
+
   class Move < Action
     def name
       "move"
     end
 
-    def perform
-      
+    def perform(world)
+      Array.wrap(from.get_blocks(world)).each do |block|
+        preposition = to_preposition
+        target = to.get_blocks(world)
+        args = {preposition: preposition, target: target, source: block}
+        # puts "Running with_preposition #{args.inspect} "
+        world.with_preposition(args)
+      end
     end
-    
-    def source
 
+    def from
+      from_exp.body
+    end
+
+    def to
+      to_exp.body
+    end
+
+    def to_preposition
+      to.preposition.text_value
     end
 
     def args_length
