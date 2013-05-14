@@ -1,8 +1,5 @@
 module Command
   class Block < Treetop::Runtime::SyntaxNode
-    def to_a
-      return self.elements
-    end
   end
   
   class Form < Treetop::Runtime::SyntaxNode
@@ -36,6 +33,9 @@ module Command
   end
 
   class Qualifier < Treetop::Runtime::SyntaxNode
+    def name
+      elements.first.text_value
+    end
   end
 
   class Root < Treetop::Runtime::SyntaxNode
@@ -58,20 +58,45 @@ module Command
     def name
       "take"
     end
+
+    def perform(world)
+      world.take(arguments[0])
+    end
+
+    def qualifier
+      exp.body
+    end
+
+    def args_length
+      1
+    end
+
+    def arguments
+      [qualified_exp]
+    end
   end
   
   class Move < Action
     def name
       "move"
     end
+    
     def source
 
+    end
+
+    def args_length
+      2
     end
   end
 
   class Put < Action
     def name
       "put"
+    end
+
+    def args_length
+      1
     end
   end
 end

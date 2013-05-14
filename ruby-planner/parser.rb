@@ -1,5 +1,6 @@
 require 'treetop'
 require 'debugger'
+require './tree_wrapper'
 
 # Find out what our base path is
 BASE_PATH = File.expand_path(File.dirname(__FILE__))
@@ -12,17 +13,12 @@ class Parser
   @@parser = CommandParser.new
 
   def self.parse(data)
-    @tree = @@parser.parse(data)
+    wrapper = TreeWrapper.new(@@parser.parse(data))
     
-    if @tree.nil?
-      debugger
-      raise Exception, "Parse error at offset: #{@@parser.index}"
+    if wrapper.tree.nil? 
+      puts "Encountered error: #{@@parser.failure_reason}"
+      # raise Exception, "Parse error at offset: #{@@parser.index}"
     end
-
-    return @tree
-  end
-
-  def get_action
-    tree
+    return wrapper
   end
 end

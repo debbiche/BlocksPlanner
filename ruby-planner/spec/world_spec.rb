@@ -42,6 +42,41 @@ describe World do
     end
   end
 
+  describe "fetching" do
+    it "should be possible to do an any fetch" do
+      world.any { world.with_properties(color: "green")}.should eq("d")
+    end
+
+    it "should be possbile to do a the fetch" do
+    end
+
+    it "should be possible to do a thatis fetch" do
+      world.thatis(
+        properties: {color: "blue"}, 
+        preposition: "leftof") { world.the { world.with_properties(color: "green") } }.should eq(["a"])
+    end
+
+    it "should be possible to get all blocks leftof" do
+      world.is_leftof("c").should eq(["a", "b"])
+    end
+
+    it "should be possible to get all blocks rightof" do
+      world.is_rightof("k").should eq(["l", "m"])
+    end
+
+    it "should be possible to get a block ontop" do
+      world.is_ontop("e").should eq("f")
+    end
+
+    it "should be possible to get blocks above" do
+      world.is_above("g").should eq(["h", "i"])
+    end
+
+    it "should be possible to get blocks under" do
+      world.is_under("g").should eq(["e", "f"])
+    end
+  end
+
   describe "moving" do
     it "does ontop correctly" do
       world.ontop("a", "b")
@@ -70,6 +105,11 @@ describe World do
       world.beside("a", "m")
       world.get_column(1).should eq(["b"])
       world.get_column(8).should eq(["a"])
+    end
+
+    it "does under correctly" do
+      world.under("b", "a")
+      world.get_column(1).should eq(["b", "a"])
     end
   end
 

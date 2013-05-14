@@ -38,6 +38,35 @@ class World
     [column_index, height]
   end
 
+  def with_position(preposition, object)
+    self.send("is_#{preposition}", object)
+  end
+
+  def any
+    return yield.first
+  end
+
+  def the
+    return yield.first
+  end
+
+  def all
+    return yield
+  end
+
+  # Input block is expected to yield an array of block names
+  def thatis(options)
+    preposition = options[:preposition]
+    properties  = options[:properties]
+    by_properties = with_properties(properties)
+    # Right now we do not handle multiple block
+    object = yield
+    object = object.first if object.respond_to? :each
+    blocks_matching_position = with_position(preposition, object)
+    result = by_properties & blocks_matching_position
+    return result
+  end
+
   def get_column(column_index)
     return @world[column_index]
   end
@@ -85,6 +114,7 @@ class World
     calculate_column(position_of(block_name), 1)
   end
 
+  # First try leftof, then try rightoff, else nil
   def beside_position(block_name)
     leftof_position(block_name) || rightof_position(block_name)
   end
@@ -124,6 +154,15 @@ class World
     put_on_top_of_column(subject, column_index)
   end
 
+  def under(subject, target)
+    remove_block(subject)
+    target_block_position = position_of(target)
+    column_index = target_block_position[0]
+    row = target_block_position[1] - 1
+    row = 0 if row < 0
+    insert_block_at_position(subject, [column_index, row])
+  end
+
   def insert_block_at_position(block, position)
     if sane(position)
       column_index = position[0]
@@ -133,9 +172,64 @@ class World
     end
   end
 
+  # Position fetchers
+  def is_leftof(block_name)
+    position_get(block_name) { |col,row| @world[0..col - 1] }
+  end
+
+  def is_rightof(block_name)
+    position_get(block_name) { |col,row| @world[col + 1..@world.length - 1] }
+  end
+
+  def is_ontop(block_name)
+    position_get(block_name) { |col,row| @world[col][row + 1]}
+  end
+
+  def is_above(block_name)
+    position_get(block_name) do |col,row|
+      column = @world[col]
+      start = row + 1
+      top = column.length - 1
+      return column[start..top]
+    end
+  end
+
+  def is_under(block_name)
+    position_get(block_name) do |col, row|
+      column = @world[col]
+      stop = row - 1
+      return column[0..stop]
+    end
+  end
+
+  # Takes a block_name, then
+  #   1. Get position of block
+  #   2. Yield to block, sending column index and row index
+  #   3. Flatten result, or just return if not array
+  def position_get(block_name)
+    position = position_of(block_name)
+    blocks = yield(position[0], position[1])
+    if blocks.respond_to? :each
+      blocks.flatten 
+    else
+      blocks
+    end
+  end
+
+  # Inside is equivalent to ontop (for now)
+  def inside(subject, target)
+    ontop(subject, target)
+  end
+
   # Sanity checks
 
   def sane(position)
     position[0] >= 0 && position[1] >= 0 && position[0] < @world.size
+  end
+
+  # Grabber operations
+  def take(block_name)
+    remove_block(block_name)
+    @grabber = block_name
   end
 end

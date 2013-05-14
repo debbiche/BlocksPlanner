@@ -1,6 +1,6 @@
 grammar Command
   rule root
-    '(' space? command ')' <Root> 
+    '(' space? command space? ')' <Root> 
   end
   rule exp
     '(' space? body space? ')'
@@ -31,7 +31,7 @@ grammar Command
   end
 
   rule qualifier
-    ("the" <Qualifier> / "any" <Qualifier>/ "all" <Qualifier>) space? exp
+    ("the"  / "any" / "all" ) space? qualified_exp:exp <Qualifier>
   end
 
   rule position
@@ -41,7 +41,7 @@ grammar Command
   rule preposition
     ("beside"  /
      "leftof"  /
-     "righto"  /
+     "rightof" /
      "above "  /
      "ontop "  /
      "under "  /
@@ -49,7 +49,7 @@ grammar Command
   end
 
   rule thatis
-    "thatis" space? exp space? exp <Thatis> 
+    "thatis" space? attributes:exp space? position:exp <Thatis> 
   end
 
   rule block
