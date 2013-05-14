@@ -63,6 +63,7 @@ class World
     object = yield
     object = object.first if object.respond_to? :each
     blocks_matching_position = with_position(preposition, object)
+    blocks_matching_position = [blocks_matching_position] unless blocks_matching_position.respond_to? :each
     result = by_properties & blocks_matching_position
     return result
   end
@@ -231,5 +232,10 @@ class World
   def take(block_name)
     remove_block(block_name)
     @grabber = block_name
+  end
+
+  def move(target, destination)
+    remove_block(block_name)
+    insert_block_at_position(block_name, destination)
   end
 end

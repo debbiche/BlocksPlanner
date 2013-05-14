@@ -1,5 +1,15 @@
 module Command
   class Block < Treetop::Runtime::SyntaxNode
+    def get_blocks(world)
+      world.with_properties(properties)
+    end
+
+    def properties
+      _form   = form.text_value
+      _color  = color.text_value
+      _size   = size.text_value
+      {form: _form, color: _color, size: _size}
+    end
   end
   
   class Form < Treetop::Runtime::SyntaxNode
@@ -36,6 +46,14 @@ module Command
     def name
       elements.first.text_value
     end
+
+    def get_blocks(world)
+      world.send(name) {fetch_expression.get_blocks(world)}
+    end
+
+    def fetch_expression
+      qualified_exp.body
+    end
   end
 
   class Root < Treetop::Runtime::SyntaxNode
@@ -43,12 +61,32 @@ module Command
   end
 
   class Thatis < Treetop::Runtime::SyntaxNode
+    def block
+      block_exp.body
+    end
+
+    def get_blocks(world)
+      world.thatis(properties: block.properties, preposition: position.preposition_name) do
+        position.get_blocks(world)
+      end
+    end
+
+    def position 
+      position_exp.body
+    end
   end
 
   class Preposition < Treetop::Runtime::SyntaxNode
   end
 
   class Position < Treetop::Runtime::SyntaxNode
+    def get_blocks(world)
+      exp.body.get_blocks(world)
+    end
+
+    def preposition_name
+      preposition.text_value
+    end
   end
 
   class Action < Treetop::Runtime::SyntaxNode
@@ -60,25 +98,25 @@ module Command
     end
 
     def perform(world)
-      world.take(arguments[0])
-    end
-
-    def qualifier
-      exp.body
+      world.take(qualifier.get_blocks(world))
     end
 
     def args_length
       1
     end
 
-    def arguments
-      [qualified_exp]
+    def qualifier
+      exp.body
     end
   end
   
   class Move < Action
     def name
       "move"
+    end
+
+    def perform
+      
     end
     
     def source
