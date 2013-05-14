@@ -22,7 +22,7 @@ data Grabber = Clear | Grabber Block deriving (Show, Eq)
 newtype World = World ([[Block]], Grabber) deriving (Show, Eq)
 --data World = World ([Stack], Grabber) deriving (Show, Eq)
 
-type Plan = [(String, Int)] -- consider changing to actio
+type Plan = [(String, Int)]
 
 -- (String, Int) = action
 
@@ -41,12 +41,11 @@ k = Block Ball Small Yellow
 l = Block Box Medium Red
 m = Block Ball Medium Blue
 
-test = s2
-  where
-    (s1, _) = pick initial_world 1 
-    (s2, _) = dropp s1 0
-    (s3, _) = pick s2 0
-    (s4, _) = dropp s3 1
+
+plan :: World -> World -> Plan
+plan w1 w2 = planner w1 w2 [] [[(w1,[])]] []
+  
+    
 
  --INITIAL WORLD CREATION
 empty :: [Block]    
@@ -55,26 +54,30 @@ empty = []
 -- Reverse is needed for now to reflect design
 s1 = reverse [a,b]
 s2 = reverse [c,d]
-s3 = reverse [e,f,g,h,i]
+s3 = reverse [e,f]
 s4 = reverse [j,k]
 s5 = reverse [l,m]
 
-initial_world :: World
---initial_world = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
+start_world :: World
+start_world = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
 --initial_world = World ([empty,s1,s2],Clear)
-initial_world = World ([[Block Rectangle Large Blue],[Block Rectangle Large Red],empty],Clear)
+
+-- Returns the number of columns in the world
+cols :: Int
+cols = length blocks
+  where
+    (World (blocks, _)) = start_world
 
 --FINAL WORLD CREATION
-s11 = reverse [a,b,c]
-s22 = reverse [b,d]
-s33 = reverse [e,f,h,i]
-s44 = reverse [g,j,k]
-s55 = reverse [m,l]
+s11 = reverse [a,b,c,d]
+s22 = reverse []
+s33 = reverse [e,f]
+s44 = reverse [j,k]
+s55 = reverse [l,m]
 
-final_world :: World
---final_world = World ([empty,s11,s22,empty,s33,empty,empty,s44,empty,s55],Clear)
+end_world :: World
+end_world = World ([empty,s11,s22,empty,s33,empty,empty,s44,empty,s55],Clear)
 --final_world = World ([s11,empty,s22],Clear)
-final_world = World ([[Block Rectangle Large Red], empty,[Block Rectangle Large Blue]],Clear)
 
 cc :: World -> World -> Bool
 cc w1 w2 = b1 == b2
@@ -83,12 +86,11 @@ cc w1 w2 = b1 == b2
     (World (b2, _)) = w2
 
 --PLANNER
---         init     final    acc        lists node on same level  Next level brothers
 planner :: World -> World -> [World] -> [[(World, Plan)]] -> [[(World, Plan)]] -> Plan
 --planner world1 world2 acc [] c = (error "Planner called with empty lists")
 planner w1 w2 acc (((w, plan):xs):xss) stack1
   | (cc w w2) == True  = reverse plan -- base case
-  | w `elem` acc     = planner w1 w2 acc (xs:xss) stack1 -- already visited this world, ignore it
+  | w `elem` acc     = planner w1 w2 acc (xs:xss) stack1 -- already visited this world
   | otherwise        = planner w w2 (w:acc) (xs:xss) ((build_plan w plan):stack1)
 planner w1 w2 acc ([]:xss) stack1 = planner w1 w2 acc xss stack1 -- No brothers 
 planner w1 w2 acc [] stack1 = planner w1 w2 acc (reverse stack1) [] -- the next level brothers become actual brothers
@@ -107,7 +109,7 @@ build_plan' world plan acc (action:actions)
     (new_world, is_allowed) = execute world action
 
 possible_action :: Plan
-possible_action =  [(y,x)| x <- [0..2], y <- ["pick", "drop"]]
+possible_action =  [(y,x)| x <- [0..(cols-1)], y <- ["pick", "drop"]]
 
 execute :: World -> (String, Int) -> (World, Bool)
 execute world ("pick", column) = pick world column
@@ -154,7 +156,7 @@ get_blocks (World (blocks, _)) = blocks
 picked :: World
 picked = world
   where
-    (world, _) = pick initial_world 1
+    (world, _) = pick start_world 1
 
 -- Checks whether a world is valid or not
 is_Valid :: World -> Bool
