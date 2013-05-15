@@ -8,7 +8,10 @@ module ArrayUtils
   end
 
   def Array.wrap(o)
-    o = [o] unless o.respond_to? :each
+    if o.nil?
+      return []
+    end
+    return o.respond_to?(:each) ? o : [o]
   end
 
   def any

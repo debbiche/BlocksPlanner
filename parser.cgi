@@ -2,6 +2,7 @@
 
 import cgi
 import os
+import sys
 
 from subprocess import Popen, PIPE, call
 PARSER = ["/Users/jesjos/.cabal/bin/gf",
@@ -61,9 +62,14 @@ def main_cgi():
     for tree in parse_userinput(userinput):
         print tree
 
+def main_command_line(input):
+  for tree in parse_userinput(input):
+    print tree
+
 if __name__ == '__main__':
     try:
-        main_cgi()
+        main_command_line(sys.argv[1])
+        # main_cgi()
     except Exception as err:
         print "ERROR"
         print "%s: %s" % (type(err).__name__, err)

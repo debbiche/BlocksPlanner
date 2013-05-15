@@ -138,4 +138,15 @@ describe World do
       world.encode_world.should eq(";a b;c d;;e f g h i;;;j k;;l m;grabber empty;")
     end
   end
+
+  describe "decoding" do
+    it "should correctly decode an incoming world" do
+      world.parse_world(";a,b;c,d;;e,f,g,h,i;;;j,k;;l,m").should eq(world.world)
+    end
+
+    it "should correctly decode a string input" do
+      w = World.new(";a,b;c,d;;e,f,g,h,i;;;j,k;;l,m")
+      w.world.should eq(world.world)
+    end
+  end
 end

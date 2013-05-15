@@ -123,7 +123,6 @@ module Command
         preposition = to_preposition
         target = to.get_blocks(world)
         args = {:preposition => preposition, :target => target, :source => block}
-        # puts "Running with_preposition #{args.inspect} "
         world.with_preposition(args)
       end
     end
