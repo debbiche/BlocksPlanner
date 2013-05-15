@@ -5,6 +5,10 @@ class TreeWrapper
     @tree = tree
   end
 
+  def perform(world)
+    @tree.command.perform(world)
+  end
+
   def to_s
     @tree.to_s
   end
