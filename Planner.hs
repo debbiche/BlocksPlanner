@@ -1,31 +1,9 @@
-module World where
+module Planner where
 
-import Data.List
-import Data.Maybe
-import Data.String
-import Debug.Trace
-
-data Shape = Square | Rectangle | Pyramid |
-             Ball | Box deriving (Show, Eq)
-                    
-data Color = Red | Black | Blue |
-             Green | Yellow | White deriving (Show, Eq)
-
-data Size = Large | Medium |
-            Small | Tall | Wide deriving (Show, Eq)
-                   
-data Block = Block Shape Size Color deriving (Show, Eq)
-
-data Grabber = Clear | Grabber Block deriving (Show, Eq)
-
---data Stack   = Empty | Stack [Block] deriving (Show, Eq)
-                    
-newtype World = World ([[Block]], Grabber) deriving (Show, Eq)
---data World = World ([Stack], Grabber) deriving (Show, Eq)
-
-type Plan = [(String, Int)]
-
--- (String, Int) = action
+import Data.List.Split
+import System.Environment   
+import Parser
+import DataStructure
 
 --SHAPES CREATION
 a = Block Rectangle Tall Blue
@@ -46,8 +24,6 @@ m = Block Ball Medium Blue
 plan :: World -> World -> Plan
 plan w1 w2 = planner w1 w2 [] [[(w1,[])]] []
   
-    
-
  --INITIAL WORLD CREATION
 empty :: [Block]    
 empty = []
@@ -89,9 +65,9 @@ cc w1 w2 = b1 == b2
 --PLANNER
 planner :: World -> World -> [World] -> [[(World, Plan)]] -> [[(World, Plan)]] -> Plan
 planner w1 w2 acc (((w, plan):xs):xss) stack1
-  | (cc w w2)   = reverse plan -- base case
-  | w `elem` acc     = planner w1 w2 acc (xs:xss) stack1 -- already visited this world
-  | otherwise        = planner w w2 (w:acc) (xs:xss) ((build_plan w plan):stack1)
+  | w == w2      = reverse plan -- base case
+  | w `elem` acc = planner w1 w2 acc (xs:xss) stack1 -- already visited this world
+  | otherwise    = planner w w2 (w:acc) (xs:xss) ((build_plan'' w plan):stack1)
 planner w1 w2 acc ([]:xss) stack1 = planner w1 w2 acc xss stack1 -- No brothers 
 planner w1 w2 acc [] stack1 = planner w1 w2 acc (reverse stack1) []
 
@@ -181,7 +157,6 @@ shape_not_top world shape = not $ or check_shape_pos
    pos_shape column    = any (\x -> is_shape x shape) column
    ignore_first_blocks = map tail (filter (not . null) blocks) -- disrecard 1st pos
 
---Smaller block cannot support larger.
 --Size = Large | Medium | Small | Tall | Wide
 
 -- not tested yet
@@ -191,15 +166,6 @@ shape_not_top world shape = not $ or check_shape_pos
 --     (World (blocks, _)) = world
 --     sizes =  [[map (compare_blocks stack) pos| pos <- pairs_lists] | stack <- blocks]
 --     pairs_lists =  [[(x,x+1) | x <- [0 .. (length stack)-2] ] |  stack <- blocks]-- rem []s
-
---Blocks are "in" boxes, but "on" other blocks.
---TODO
-
---Boxes must be supported by something larger.
---TODO
-
---Dont put something on top of a column that has blocks that needs to be moved
---TODO WARNING could potientially get into deadlock
 
 
 compare_blocks :: [Block] -> (Int,Int) -> Bool
@@ -231,3 +197,15 @@ is_shape (Block x _ _) shape
   | otherwise  = False
 
 
+--main :: (World,World)
+main = do
+       args <- getArgs
+       putStrLn (show $ run_parse args)
+
+
+run_parse :: [String] -> (World, World)
+run_parse args =  create_world x xs xss
+ where
+   x = args !! 0
+   xs = args !! 1
+   xss = args !! 2
