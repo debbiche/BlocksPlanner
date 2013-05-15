@@ -1,11 +1,4 @@
-puts "Version!"
-puts `which ruby`
-
-require 'rubygems'
-require 'bundler/setup'
-
 require 'treetop'
-require 'debugger'
 
 require File.dirname(__FILE__) + '/tree_wrapper'
 
