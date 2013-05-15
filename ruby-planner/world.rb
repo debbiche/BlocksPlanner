@@ -265,5 +265,9 @@ class World
   def grabber_to_string
     output = "grabber " << (@grabber || "empty")
   end
+
+  def copy
+    return World.new(@world.dup, @grabber)
+  end
 end
 
