@@ -6,9 +6,6 @@ cabal-dev
 *.chs.h
 .virthualenv
 error.log
-Shrd*
-shrd*
-jquery*
 lighttpd.conf
 
 #Ignore MAC fuzz

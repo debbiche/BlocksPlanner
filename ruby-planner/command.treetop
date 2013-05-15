@@ -23,7 +23,7 @@ grammar Command
   end
 
   rule move
-    "move" space? from:exp space? to:exp <Move>
+    "move" space? from_exp:exp space? to_exp:exp <Move>
   end
 
   rule thing
@@ -42,14 +42,14 @@ grammar Command
     ("beside"  /
      "leftof"  /
      "rightof" /
-     "above "  /
-     "ontop "  /
-     "under "  /
+     "above"  /
+     "ontop"  /
+     "under"  /
      "inside" )
   end
 
   rule thatis
-    "thatis" space? attributes:exp space? position:exp <Thatis> 
+    "thatis" space? block_exp:exp space? position_exp:exp <Thatis> 
   end
 
   rule block

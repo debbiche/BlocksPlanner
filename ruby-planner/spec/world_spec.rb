@@ -56,6 +56,13 @@ describe World do
         preposition: "leftof") { world.the { world.with_properties(color: "green") } }.should eq(["a"])
     end
 
+    it "should be able to an other thatis fetch" do
+      # thatis (block _ _ blue) (leftof (any (block pyramid _ _))))) (inside (any (block box medium _)))
+      world.thatis(
+        properties: {color: "blue", size: "_", form: "_"},
+        preposition: "leftof") { world.any { world.with_position("inside", world.any {world.with_properties(form: "box", size: "medium", color: "_")})}}
+    end
+
     it "should be possible to get all blocks leftof" do
       world.is_leftof("c").should eq(["a", "b"])
     end
@@ -111,6 +118,11 @@ describe World do
       world.under("b", "a")
       world.get_column(1).should eq(["b", "a"])
     end
+
+    it "works for with_preposition" do
+      world.with_preposition(preposition: "under", source: "b", target: "a")
+      world.get_column(1).should eq(["b", "a"])
+    end
   end
 
   describe "inserting" do
@@ -118,6 +130,12 @@ describe World do
       world.insert_block_at_position("x", [1,0])
       world.position_of("x").should eq([1,0])
       world.get_column(1).should eq ["x", "a", "b"]
+    end
+  end
+
+  describe "encoding" do
+    it "should encode the world into an array correctly" do
+      world.encode_world.should eq(";a b;c d;;e f g h i;;;j k;;l m;grabber empty;")
     end
   end
 end
