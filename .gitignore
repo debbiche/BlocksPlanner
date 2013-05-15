@@ -11,3 +11,6 @@ lighttpd.conf
 #Ignore MAC fuzz
 *.DS_Store
 
+#back up files
+*~
+
