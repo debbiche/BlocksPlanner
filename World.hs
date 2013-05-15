@@ -181,6 +181,7 @@ shape_not_top world shape = not $ or check_shape_pos
    pos_shape column    = any (\x -> is_shape x shape) column
    ignore_first_blocks = map tail (filter (not . null) blocks) -- disrecard 1st pos
 
+--Smaller block cannot support larger.
 --Size = Large | Medium | Small | Tall | Wide
 
 -- not tested yet
@@ -190,6 +191,15 @@ shape_not_top world shape = not $ or check_shape_pos
 --     (World (blocks, _)) = world
 --     sizes =  [[map (compare_blocks stack) pos| pos <- pairs_lists] | stack <- blocks]
 --     pairs_lists =  [[(x,x+1) | x <- [0 .. (length stack)-2] ] |  stack <- blocks]-- rem []s
+
+--Blocks are "in" boxes, but "on" other blocks.
+--TODO
+
+--Boxes must be supported by something larger.
+--TODO
+
+--Dont put something on top of a column that has blocks that needs to be moved
+--TODO WARNING could potientially get into deadlock
 
 
 compare_blocks :: [Block] -> (Int,Int) -> Bool
