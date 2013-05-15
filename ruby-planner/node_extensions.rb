@@ -1,4 +1,4 @@
-require './array_utils'
+require File.dirname(__FILE__) + '/array_utils'
 
 module Command
   include ArrayUtils

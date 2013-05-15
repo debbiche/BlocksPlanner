@@ -1,6 +1,13 @@
+puts "Version!"
+puts `which ruby`
+
+require 'rubygems'
+require 'bundler/setup'
+
 require 'treetop'
 require 'debugger'
-require './tree_wrapper'
+
+require File.dirname(__FILE__) + '/tree_wrapper'
 
 # Find out what our base path is
 BASE_PATH = File.expand_path(File.dirname(__FILE__))
