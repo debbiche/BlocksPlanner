@@ -1,4 +1,4 @@
-require './array_utils'
+require File.dirname(__FILE__) + '/array_utils'
 
 class World
   include ArrayUtils
@@ -7,7 +7,11 @@ class World
   attr_reader :world, :blocks, :grabber
   def initialize(world = nil, grabber = nil)
     @grabber = grabber
-    @world = world || [[], ["a","b"], ["c","d"], [], ["e","f","g","h","i"], [], [], ["j","k"], [], ["l","m"]];
+    if world
+      @world = parse_world(world)
+    else
+      @world = [[], ["a","b"], ["c","d"], [], ["e","f","g","h","i"], [], [], ["j","k"], [], ["l","m"]];
+    end
     @blocks = {
     "a" =>  { "form" => "rectangle", "size" => "tall",   "color" => "blue",   "width" => 0.50, "height" => 1.00 },
     "b" =>  { "form" => "ball",      "size" => "small",  "color" => "white",  "width" => 0.50, "height" => 0.50 },
@@ -268,6 +272,10 @@ class World
 
   def copy
     return World.new(@world.dup, @grabber)
+  end
+
+  def parse_world(world)
+    world.split(";").map{|s| s.split(",")}
   end
 end
 

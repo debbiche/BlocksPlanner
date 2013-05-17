@@ -11,7 +11,7 @@ module Command
       _form   = form.text_value
       _color  = color.text_value
       _size   = size.text_value
-      {form: _form, color: _color, size: _size}
+      {:form => _form, :color => _color, :size => _size}
     end
   end
 
@@ -69,7 +69,7 @@ module Command
     end
 
     def get_blocks(world)
-      world.thatis(properties: block.properties, preposition: position.preposition_name) do
+      world.thatis(:properties => block.properties, :preposition => position.preposition_name) do
         position.get_blocks(world)
       end
     end
@@ -122,8 +122,7 @@ module Command
       Array.wrap(from.get_blocks(world)).each do |block|
         preposition = to_preposition
         target = to.get_blocks(world)
-        args = {preposition: preposition, target: target, source: block}
-        # puts "Running with_preposition #{args.inspect} "
+        args = {:preposition => preposition, :target => target, :source => block}
         world.with_preposition(args)
       end
     end
