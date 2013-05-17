@@ -90,6 +90,16 @@ module Command
     def preposition_name
       preposition.text_value
     end
+
+    def expression
+      exp.body
+    end
+
+    def get_coordinates(world)
+      Array.wrap(expression.get_blocks(world)).map do |block|
+        world.position_of(block)
+      end
+    end
   end
 
   class Action < Treetop::Runtime::SyntaxNode
@@ -102,6 +112,11 @@ module Command
 
     def perform(world)
       world.take(qualifier.get_blocks(world))
+    end
+
+    def to_fact(world)
+      block = qualifier.get_blocks(world)
+      return "grabber #{block}"
     end
 
     def args_length
@@ -127,6 +142,12 @@ module Command
       end
     end
 
+    def to_fact(world)
+      Array.wrap(from.get_blocks(world)).each do |block|
+        
+      end
+    end
+
     def from
       from_exp.body
     end
@@ -149,8 +170,28 @@ module Command
       "put"
     end
 
+    def perform(world)
+      coordinate = position.get_coordinates(world)
+      if coordinate.respond_to? :each
+        coordinate = coordinate.first
+      end
+      world.put(coordinate)
+    end
+
+    def to_fact(world)
+      block = position.get_blocks
+      if block.respond_to? :each
+        block = block.first
+      end
+      return "#{position.preposition} #{block} #{world.grabber}"
+    end
+
     def args_length
       1
+    end
+
+    def position
+      exp.body
     end
   end
 end

@@ -247,6 +247,12 @@ class World
     @grabber = block_name
   end
 
+  def put(destination)
+    block = @grabber
+    @grabber = nil
+    insert_block_at_position(block, destination)
+  end
+
   def move(target, destination)
     remove_block(block_name)
     insert_block_at_position(block_name, destination)
@@ -258,7 +264,7 @@ class World
 
   def encode_world
     output = @world.map {|col| col.join(" ")}.join(";")
-    output << ";" << grabber_to_string << ";"
+    output << ";" << grabber_to_string
   end
 
   def encode_block_manifest
