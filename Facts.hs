@@ -1,4 +1,4 @@
-module PlannerFact where
+module Facts where
 
 import DataStructureFacts
 import Data.List
