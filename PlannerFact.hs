@@ -27,15 +27,28 @@ empty = []
 
 testLeftOf = LeftOf a c True
 testOnTop = OnTop b a True
-testAbove = Above e g True
+testAbove = Above i g True
+notAbove = Above g i True
 under = Under e g False
+andd = And [Fluent testOnTop, Fluent testAbove]
+orr = Or [Fluent notAbove]
 testWorld = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
 
 data Fact = OnTop Block Block Bool | LeftOf Block Block Bool |
             RightOf Block Block Bool | InGrabber Block Bool |
             Above Block Block Bool | Under Block Block Bool |
-            IsBlock String Bool | IsColumn String Bool 
+            IsBlock String Bool | IsColumn String Bool
 
+data Fluent = Fluent Fact | And [Fluent] | Or [Fluent]
+data Facts = Facts [Fluent]
+
+satisfies :: World -> Facts -> Bool
+satisfies _ _ = True
+
+check_fluent :: World -> Fluent -> Bool
+check_fluent w (Fluent f)     = check_fact w f
+check_fluent w (And fluents)  = and $ map (check_fluent w) fluents
+check_fluent w (Or fluents)   = or $ map (check_fluent w) fluents
 
 check_fact :: World -> Fact -> Bool
 check_fact w (OnTop b1 b2 bool)   = is_on_top w (OnTop b1 b2 bool) == bool
