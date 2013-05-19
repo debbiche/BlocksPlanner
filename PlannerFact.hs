@@ -1,6 +1,7 @@
 module PlannerFact where
 
-import DataStructure
+import DataStructureFacts
+import Data.List
 
 
 a = Block "a" Rectangle Tall Blue
@@ -22,19 +23,27 @@ s2 = [d,c]
 s3 = [i,h,g,f,e]
 s4 = [k,j]
 s5 = [m,l]
+empty = []
 
+testLeftOf = LeftOf a c True
+testOnTop = OnTop b a True
+testAbove = Above e g True
+under = Under e g False
+testWorld = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
 
-
-data Fact = OnTop Block Block Bool | LeftOf String String Bool |
-            RightOf String String Bool | InGrabber String Bool |
-            IsBlock String Bool | IsColumn String Bool
+data Fact = OnTop Block Block Bool | LeftOf Block Block Bool |
+            RightOf Block Block Bool | InGrabber Block Bool |
+            Above Block Block Bool | Under Block Block Bool |
+            IsBlock String Bool | IsColumn String Bool 
 
 
 check_fact :: World -> Fact -> Bool
-check_fact w (OnTop b1 b2 bool) = is_on_top w (OnTop b1 b2 bool)
-
-
-
+check_fact w (OnTop b1 b2 bool)   = is_on_top w (OnTop b1 b2 bool) == bool
+check_fact w (LeftOf b1 b2 bool)  = is_left_of w (LeftOf b1 b2 bool) == bool
+check_fact w (RightOf b1 b2 bool) = is_right_of w (RightOf b1 b2 bool) == bool
+check_fact w (InGrabber b1 bool)  = is_in_grabber w (InGrabber b1 bool) == bool
+check_fact w (Above b1 b2 bool)   = is_above w (Above b1 b2 bool) == bool
+check_fact w (Under b1 b2 bool)   = not $ is_above w (Above b1 b2 bool) == bool
 
 top :: World -> Block -> Bool
 top w b = b `elem` [head list | list <-blocks]
@@ -42,21 +51,56 @@ top w b = b `elem` [head list | list <-blocks]
     (World (blocks, _)) = w
 
 is_on_top :: World -> Fact -> Bool
+is_on_top w (OnTop (Floor _) _ _) = False
+is_on_top w (OnTop b1 (Floor i) bool) = b1 == last (blocks !! i)
+  where
+     (World (blocks, _)) = w
 is_on_top w (OnTop b1 b2 bool)
  | col_b1 == col_b2 = on_top
  | otherwise        = False
   where
     (World (blocks, _)) = w
-    col_b1 = filter (b1 `elem`) blocks
-    col_b2 = filter (b2 `elem`) blocks
+    col_b1 = head $ filter (b1 `elem`) blocks
+    col_b2 = head $ filter (b2 `elem`) blocks
     on_top = index_on_top (elemIndex b1 col_b1) (elemIndex b2 col_b1)
-is_on_top w (OnTop b1 (Floor i)) = b1 ==last b1 (blocks !! i)
+
+compare_maybe :: Maybe Int -> Maybe Int -> Int -> Bool
+compare_maybe Nothing _ _ = False
+compare_maybe _ Nothing _ = False
+compare_maybe (Just x) (Just y) r = x - y == r
+
+is_left_of :: World -> Fact -> Bool
+is_left_of w (LeftOf b1 b2 bool) = 
+  compare_maybe (column_index_of b2 w) (column_index_of b1 w) 1
+
+is_right_of :: World -> Fact -> Bool
+is_right_of w (RightOf b1 b2 bool) = 
+  compare_maybe (column_index_of b2 w) (column_index_of b1 w) (-1)
+
+is_in_grabber :: World -> Fact -> Bool
+is_in_grabber (World (blocks, Clear)) _ = False
+
+is_above :: World -> Fact -> Bool
+is_above w (Above (Floor _) _ _) = False
+is_above w (Above b1 (Floor i) bool) = b1 == last (blocks !! i)
   where
      (World (blocks, _)) = w
-is_on_top w (OnTop (Floor _) _ ) = False
-    
+is_above w (Above b1 b2 bool)
+ | col_b1 == col_b2 = above
+ | otherwise        = False
+  where
+    (World (blocks, _)) = w
+    col_b1 = head $ filter (b1 `elem`) blocks
+    col_b2 = head $ filter (b2 `elem`) blocks
+    above = index_above (elemIndex b1 col_b1) (elemIndex b2 col_b1)
 
+index_above :: Maybe Int -> Maybe Int -> Bool
+index_above (Just x) (Just y) = x < y
+index_above Nothing Nothing   = False
+index_above Nothing _         = False
+index_above _       Nothing   = False
 
+index_on_top :: Maybe Int -> Maybe Int -> Bool
 index_on_top (Just x) (Just y) = x == (y-1)
 index_on_top Nothing Nothing   = False
 index_on_top Nothing _         = False
