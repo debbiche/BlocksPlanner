@@ -48,7 +48,10 @@ execute world ("drop", column) = dropp world column
 
 pick :: World -> Int -> (World, Bool)
 pick (World (world, grabber)) column
-  | null curr_column = (World (world, grabber), False)
+  | null curr_column =  (error "bacon :(")--(World (world, grabber), False)
+  where 
+    curr_column = get_stack world column
+pick (World (world, grabber)) column
   | grabber == Clear = (World (new_world, Grabber new_grabber), True)
   | otherwise        = (World (world, grabber), False)
   where
