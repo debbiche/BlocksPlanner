@@ -32,6 +32,7 @@ notAbove = Above g i True
 under = Under e g False
 andd = And [Fluent testOnTop, Fluent testAbove]
 orr = Or [Fluent notAbove]
+testFluent = Fluent (OnTop b m True)
 testWorld = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
 
 data Fact = OnTop Block Block Bool | LeftOf Block Block Bool |
@@ -40,10 +41,9 @@ data Fact = OnTop Block Block Bool | LeftOf Block Block Bool |
             IsBlock String Bool | IsColumn String Bool
 
 data Fluent = Fluent Fact | And [Fluent] | Or [Fluent]
-data Facts = Facts [Fluent]
 
-satisfies :: World -> Facts -> Bool
-satisfies _ _ = True
+satisfies :: World -> Fluent -> Bool
+satisfies world fluent = check_fluent world fluent
 
 check_fluent :: World -> Fluent -> Bool
 check_fluent w (Fluent f)     = check_fact w f
