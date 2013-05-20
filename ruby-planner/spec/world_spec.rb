@@ -144,7 +144,7 @@ describe World do
         "e box large white;f rectangle wide black;"\
         "g rectangle wide blue;h rectangle wide red;"\
         "i pyramid medium yellow;j box large red;"\
-        "k ball small yellow;l box medium red;m ball medium blue;"
+        "k ball small yellow;l box medium red;m ball medium blue"
       world.encode_blocks.should eq(expected)
     end
   end

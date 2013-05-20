@@ -18,6 +18,7 @@ get '/planner.cgi' do
   puts tree_wrapper.tree.command.to_facts(initial_world)
   facts = tree_wrapper.tree.command.to_facts(initial_world)
   command = %Q(runhaskell PlannerFacts "#{initial_world.encode_world}" "#{facts}" "#{initial_world.encode_blocks}")
+  puts command
   plan = `#{command}`
   plan.gsub(/\"/, "").split(";").join("\n")
 end

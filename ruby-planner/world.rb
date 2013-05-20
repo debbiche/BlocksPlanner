@@ -6,7 +6,10 @@ class World
   PREPOSITIONS = ["leftof", "under", "rightof", "ontop", "beside", "above", "inside"]
   attr_reader :world, :blocks, :grabber
   def initialize(world = nil, grabber = nil)
-    @grabber = grabber.empty? ? nil : grabber
+    @grabber = grabber
+    unless @grabber.nil?
+      @grabber = nil if @grabber.empty?
+    end
     if world
       @world = parse_world(world)
     else
