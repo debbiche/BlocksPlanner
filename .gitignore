@@ -15,6 +15,9 @@ lighttpd.conf
 *.class
 GraphPlanner/bin
 
+#Ignore bin
+*/bin/
+
 #back up files
 *~
 
