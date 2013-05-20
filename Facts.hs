@@ -23,6 +23,7 @@ s2 = [d,c]
 s3 = [i,h,g,f,e]
 s4 = [k,j]
 s5 = [m,l]
+s55 = [l]
 empty = []
 
 testLeftOf = LeftOf a c True
@@ -33,7 +34,11 @@ under = Under e g False
 andd = And [Fluent testOnTop, Fluent testAbove]
 orr = Or [Fluent notAbove]
 testFluent = Fluent (OnTop b m True)
+--testFluent = Fluent (OnTop b d True)
+
 testWorld = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
+--testWorld = World ([s1,s2,empty,empty,empty,empty,empty,empty,empty,empty],Clear)
+
 
 data Fact = OnTop Block Block Bool | LeftOf Block Block Bool |
             RightOf Block Block Bool | InGrabber Block Bool |
@@ -69,12 +74,15 @@ is_on_top w (OnTop b1 (Floor i) bool) = b1 == last (blocks !! i)
   where
      (World (blocks, _)) = w
 is_on_top w (OnTop b1 b2 bool)
+ | null f1 || null f2 = False
  | col_b1 == col_b2 = on_top
  | otherwise        = False
   where
     (World (blocks, _)) = w
-    col_b1 = head $ filter (b1 `elem`) blocks
-    col_b2 = head $ filter (b2 `elem`) blocks
+    f1 = filter (b1 `elem`) blocks
+    f2 = filter (b2 `elem`) blocks
+    col_b1 = head f1
+    col_b2 = head f2
     on_top = index_on_top (elemIndex b1 col_b1) (elemIndex b2 col_b1)
 
 compare_maybe :: Maybe Int -> Maybe Int -> Int -> Bool

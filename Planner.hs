@@ -37,7 +37,7 @@ s5 = [m,l]
 
 start_world :: World
 --start_world = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
-start_world = World ([empty,s1,s2,empty,empty,empty,empty,empty,empty,empty],Clear)
+start_world = World ([s1,s2,empty,empty,empty,empty,empty,empty,empty,empty],Clear)
 
 -- Returns the number of columns in the world
 cols :: Int
@@ -47,7 +47,7 @@ cols = length blocks
 
 --FINAL WORLD CREATION
 s11 = [b,a]
-s22 = [d,c,f,e]
+s22 = [b,d,c]
 s33 = [i,h,g]
 s44 = [k,j]
 s55 = [m,l]
@@ -68,7 +68,7 @@ planner w1 w2 acc (((w, plan):xs):xss) stack1
   | w == w2      = reverse plan -- base case
   | w1 `elem` acc = planner w w2 acc (xs:xss) stack1 -- already visited this world
   | w `elem` acc = planner w w2 acc (xs:xss) stack1 -- already visited this world
-  | otherwise    = planner w w2 (w:acc) (xs:xss) ((build_plan'' w plan):stack1)
+  | otherwise    = planner w w2 (w:acc) (xs:xss) ((build_plan w plan):stack1)
 planner w1 w2 acc ([]:xss) stack1 = planner w1 w2 acc xss stack1 -- No brothers 
 planner w1 w2 acc [] stack1 = planner w1 w2 acc (reverse stack1) []
 
