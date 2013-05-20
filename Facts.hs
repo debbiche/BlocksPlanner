@@ -36,7 +36,7 @@ orr = Or [Fluent notAbove]
 testFluent = Fluent (OnTop b m True)
 --testFluent = Fluent (OnTop b d True)
 
-testWorld = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
+testWorld = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5], Grabber i)
 --testWorld = World ([s1,s2,empty,empty,empty,empty,empty,empty,empty,empty],Clear)
 
 
