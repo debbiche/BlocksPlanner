@@ -276,6 +276,17 @@ class World
     output = "grabber " << (@grabber || "empty")
   end
 
+  def encode_blocks
+    output = ""
+    @blocks.each do |name, properties|
+      form = properties["form"]
+      color = properties["color"]
+      size = properties["size"]
+      output << "#{name} #{form} #{size} #{color};"
+    end
+    output
+  end
+
   def copy
     return World.new(@world.dup, @grabber)
   end

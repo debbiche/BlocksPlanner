@@ -135,7 +135,17 @@ describe World do
 
   describe "encoding" do
     it "should encode the world into an array correctly" do
-      world.encode_world.should eq(";a b;c d;;e f g h i;;;j k;;l m;grabber empty;")
+      world.encode_world.should eq(";a b;c d;;e f g h i;;;j k;;l m;grabber empty")
+    end
+
+    it "should output a correct block manifest" do
+      expected = "a rectangle tall blue;b ball small white;"\
+        "c square large red;d pyramid large green;"\
+        "e box large white;f rectangle wide black;"\
+        "g rectangle wide blue;h rectangle wide red;"\
+        "i pyramid medium yellow;j box large red;"\
+        "k ball small yellow;l box medium red;m ball medium blue;"
+      world.encode_blocks.should eq(expected)
     end
   end
 

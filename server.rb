@@ -15,9 +15,6 @@ get '/planner.cgi' do
   # Worlds are mutable (sorry...) :P
   final_world   = World.new(world, holding)
   tree_wrapper  = Parser.parse(trees.split("\n").first)
-  puts tree_wrapper.tree.command
-  tree_wrapper.perform(final_world)
-  puts initial_world
-  puts final_world
-  final_world.to_s
+  puts tree_wrapper.tree.command.to_facts(initial_world)
+  tree_wrapper.tree.command.to_facts(initial_world)
 end

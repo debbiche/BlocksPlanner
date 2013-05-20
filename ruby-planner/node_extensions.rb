@@ -54,6 +54,10 @@ module Command
       world.send(name) {fetch_expression.get_blocks(world)}
     end
 
+    def get_all_blocks(world)
+      fetch_expression.get_blocks(world)
+    end
+
     def fetch_expression
       qualified_exp.body
     end
@@ -84,7 +88,11 @@ module Command
 
   class Position < Treetop::Runtime::SyntaxNode
     def get_blocks(world)
-      exp.body.get_blocks(world)
+      expression.get_blocks(world)
+    end
+
+    def get_all_blocks(world)
+      expression.get_all_blocks(world)
     end
 
     def preposition_name
@@ -114,9 +122,13 @@ module Command
       world.take(qualifier.get_blocks(world))
     end
 
-    def to_fact(world)
-      block = qualifier.get_blocks(world)
-      return "grabber #{block}"
+    def to_facts(world)
+      orBucket = OrBucket.new
+      blocks = Array.wrap(qualifier.get_all_blocks(world))
+      blocks.each do |block|
+        orBucket.facts << "grabber #{block}"
+      end
+      return orBucket.to_s
     end
 
     def args_length
@@ -178,12 +190,13 @@ module Command
       world.put(coordinate)
     end
 
-    def to_fact(world)
-      block = position.get_blocks
-      if block.respond_to? :each
-        block = block.first
+    def to_facts(world)
+      orBucket = OrBucket.new
+      blocks = Array.wrap(position.get_all_blocks(world))
+      blocks.each do |block|
+        orBucket.facts << "#{position.preposition_name} #{world.grabber} #{block}"
       end
-      return "#{position.preposition} #{block} #{world.grabber}"
+      return orBucket.to_s
     end
 
     def args_length
@@ -192,6 +205,34 @@ module Command
 
     def position
       exp.body
+    end
+  end
+
+  class Bucket
+    attr_accessor :facts
+ 
+    def initialize
+      @facts = []
+    end
+ 
+    def to_s
+      output = []
+      facts.each do |f|
+        output << "(#{f})"
+      end
+      output.join(name)
+    end
+  end
+
+  class OrBucket < Bucket
+    def name
+      "|"
+    end
+  end
+ 
+  class AndBucket < Bucket
+    def name
+      "&"
     end
   end
 end
