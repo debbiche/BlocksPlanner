@@ -14,6 +14,13 @@ public class Planner {
 	private static ArrayList<String> _mutex = new ArrayList<String>();
 	private static ArrayList<World> visitedWorlds = new ArrayList<World>();
 	
+	/*
+	Hashmap actions = Hashmap<IndexAction, action>
+	Hashmap Facts = Hashmap<IndexFact, derivedFacts>
+	DoubleArray Action-DerivedFacts = [indexFacts][indexActions]
+	Hashmap derivedFactsMutex = Hashmap<DerivedFact, List<DerivedFacts>>
+	*/
+	
 	public static String planner() {
 		String plan;
 		while(true){
@@ -68,8 +75,8 @@ public class Planner {
 
 	private static void generateNextLayer() {
 		// TODO Create the next layer of the graph
-		LinkActionToPrecondition();
-		generateEffects();
+		linkActionToPrecondition();
+		linkActionToEffects();
 		createFactsMutex();
 		createActionsMutex();
 		
@@ -81,18 +88,37 @@ public class Planner {
 	
 	private static void createFactsMutex() {
 		// TODO Auto-generated method stub
+		/*
+		if facts negation of each other mutex
+		if all pairwise actions are mutex for 2 given facts these 2 facts are mutex
+		*/
+		/*
+			for(i=0; i < Facts.length; i++){
+				for(j = i+1; j < Facts.length; j++){
+					if (all actions are mutex for i and j) then mutex between i and j
+					if (fact instanceof finalfact) Add to derivedFactsMutex
+				}
+			}
+		}
+		*/
 		
 	}
 	private static void createActionsMutex() {
 		// TODO Auto-generated method stub
+		/*
+		Create mutex between action 
+		if any preconditions are negation of each other
+		if any effects are negation of each other
+		if any precondition is negation of any effect of the other
+		*/
 		
 	}
-	private static void generateEffects() {
-		// TODO Auto-generated method stub
+	private static void linkActionToEffects() {
+		// TODO Create the links
 		
 	}
-	private static void LinkActionToPrecondition() {
-		// TODO Auto-generated method stub
+	private static void linkActionToPrecondition() {
+		// TODO Create the links
 		
 	}
 	private static String extractSolution() {
