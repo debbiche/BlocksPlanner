@@ -158,7 +158,7 @@ is_shape (Block _ x _ _) shape
 main :: IO ()
 main = do
        args <- getArgs
-       print (parse_plan $ run_parse args)
+       print (init $ parse_plan $ run_parse args)
 
 
 run_parse :: [String] -> Plan
@@ -172,4 +172,4 @@ run_parse args =  plan start_world fluent
 
 parse_plan :: Plan -> String
 parse_plan [] = []
-parse_plan ((action,col):xs) = (action++" "++(show col))++"\n"++parse_plan xs
+parse_plan ((action,col):xs) = (action++" "++(show col))++";"++parse_plan xs

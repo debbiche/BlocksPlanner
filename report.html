@@ -148,17 +148,16 @@ document.body.className = "script";
 <p><a class="all" href="javascript:show('')">All hints</a></p>
 <ul>
 <li><a id="hint0" href="javascript:show('hint0')">Error: Eta reduce (1)</a></li>
-<li><a id="hint1" href="javascript:show('hint1')">Error: Use print (1)</a></li>
-<li><a id="hint2" href="javascript:show('hint2')">Warning: Avoid lambda (1)</a></li>
-<li><a id="hint3" href="javascript:show('hint3')">Warning: Redundant bracket (9)</a></li>
-<li><a id="hint4" href="javascript:show('hint4')">Warning: Use : (1)</a></li>
-<li><a id="hint5" href="javascript:show('hint5')">Warning: Use camelCase (12)</a></li>
-<li><a id="hint6" href="javascript:show('hint6')">Warning: Use head (1)</a></li>
+<li><a id="hint1" href="javascript:show('hint1')">Warning: Avoid lambda (1)</a></li>
+<li><a id="hint2" href="javascript:show('hint2')">Warning: Redundant bracket (10)</a></li>
+<li><a id="hint3" href="javascript:show('hint3')">Warning: Use : (1)</a></li>
+<li><a id="hint4" href="javascript:show('hint4')">Warning: Use camelCase (13)</a></li>
+<li><a id="hint5" href="javascript:show('hint5')">Warning: Use head (1)</a></li>
 </ul>
 
 <p><a class="all" href="javascript:show('')">All files</a></p>
 <ul>
-<li><a id="file0" href="javascript:show('file0')">PlannerFacts.hs (26)</a></li>
+<li><a id="file0" href="javascript:show('file0')">PlannerFacts.hs (27)</a></li>
 </ul>
 
 </div>
@@ -169,7 +168,7 @@ v1.8.45
 	- a tool to suggest improvements to your Haskell code.
 </p>
 
-<div class="hint3 file0">
+<div class="hint2 file0">
 PlannerFacts.hs:27:56: Warning: Redundant bracket<br/>
 Found<br/>
 <pre><span class='hs-layout'>(</span><span class='hs-varid'>build_plan</span> <span class='hs-varid'>w</span> <span class='hs-varid'>plan</span><span class='hs-layout'>)</span> <span class='hs-conop'>:</span> <span class='hs-varid'>stack1</span></pre>
@@ -178,7 +177,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint5 file0">
+<div class="hint4 file0">
 PlannerFacts.hs:32:1: Warning: Use camelCase<br/>
 Found<br/>
 <pre><span class='hs-definition'>build_plan''</span> <span class='hs-varid'>w</span> <span class='hs-varid'>p</span> <span class='hs-keyglyph'>=</span> <span class='hs-varop'>...</span></pre>
@@ -187,7 +186,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint5 file0">
+<div class="hint4 file0">
 PlannerFacts.hs:39:1: Warning: Use camelCase<br/>
 Found<br/>
 <pre><span class='hs-definition'>build_plan</span> <span class='hs-varid'>world</span> <span class='hs-varid'>plan</span> <span class='hs-keyglyph'>=</span> <span class='hs-varop'>...</span></pre>
@@ -196,7 +195,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint3 file0">
+<div class="hint2 file0">
 PlannerFacts.hs:43:45: Warning: Redundant bracket<br/>
 Found<br/>
 <pre><span class='hs-layout'>(</span><span class='hs-varid'>new_world</span><span class='hs-layout'>,</span> <span class='hs-layout'>(</span><span class='hs-varid'>action</span> <span class='hs-conop'>:</span> <span class='hs-varid'>plan</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span></pre>
@@ -205,7 +204,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint5 file0">
+<div class="hint4 file0">
 PlannerFacts.hs:50:1: Warning: Use camelCase<br/>
 Found<br/>
 <pre><span class='hs-definition'>possible_actions</span> <span class='hs-keyglyph'>=</span> <span class='hs-varop'>...</span></pre>
@@ -214,7 +213,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint3 file0">
+<div class="hint2 file0">
 PlannerFacts.hs:64:19: Warning: Redundant bracket<br/>
 Found<br/>
 <pre><span class='hs-layout'>(</span><span class='hs-varid'>world</span> <span class='hs-varop'>!!=</span> <span class='hs-layout'>(</span><span class='hs-varid'>column</span><span class='hs-layout'>,</span> <span class='hs-varid'>new_column</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span></pre>
@@ -223,7 +222,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint4 file0">
+<div class="hint3 file0">
 PlannerFacts.hs:76:20: Warning: Use :<br/>
 Found<br/>
 <pre><span class='hs-keyglyph'>[</span><span class='hs-layout'>(</span><span class='hs-varid'>grabber_to_block</span> <span class='hs-varid'>block</span><span class='hs-layout'>)</span><span class='hs-keyglyph'>]</span> <span class='hs-varop'>++</span> <span class='hs-varid'>curr_column</span></pre>
@@ -232,7 +231,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint3 file0">
+<div class="hint2 file0">
 PlannerFacts.hs:76:20: Warning: Redundant bracket<br/>
 Found<br/>
 <pre><span class='hs-keyglyph'>[</span><span class='hs-layout'>(</span><span class='hs-varid'>grabber_to_block</span> <span class='hs-varid'>block</span><span class='hs-layout'>)</span><span class='hs-keyglyph'>]</span></pre>
@@ -241,7 +240,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint5 file0">
+<div class="hint4 file0">
 PlannerFacts.hs:81:1: Warning: Use camelCase<br/>
 Found<br/>
 <pre><span class='hs-definition'>grabber_to_block</span> <span class='hs-layout'>(</span><span class='hs-conid'>Grabber</span> <span class='hs-layout'>(</span><span class='hs-conid'>Block</span> <span class='hs-varid'>name</span> <span class='hs-varid'>x</span> <span class='hs-varid'>y</span> <span class='hs-varid'>z</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-varop'>...</span></pre>
@@ -250,7 +249,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint3 file0">
+<div class="hint2 file0">
 PlannerFacts.hs:82:22: Warning: Redundant bracket<br/>
 Found<br/>
 <pre><span class='hs-layout'>(</span><span class='hs-varid'>error</span> <span class='hs-str'>"something went wrong :("</span><span class='hs-layout'>)</span></pre>
@@ -259,7 +258,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint3 file0">
+<div class="hint2 file0">
 PlannerFacts.hs:87:21: Warning: Redundant bracket<br/>
 Found<br/>
 <pre><span class='hs-layout'>(</span><span class='hs-varid'>el</span> <span class='hs-conop'>:</span> <span class='hs-varid'>xs</span><span class='hs-layout'>)</span></pre>
@@ -268,7 +267,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint3 file0">
+<div class="hint2 file0">
 PlannerFacts.hs:88:21: Warning: Redundant bracket<br/>
 Found<br/>
 <pre><span class='hs-layout'>(</span><span class='hs-varid'>x</span> <span class='hs-conop'>:</span> <span class='hs-layout'>(</span><span class='hs-varid'>xs</span> <span class='hs-varop'>!!=</span> <span class='hs-layout'>(</span><span class='hs-varid'>n</span> <span class='hs-comment'>-</span> <span class='hs-num'>1</span><span class='hs-layout'>,</span> <span class='hs-varid'>el</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span></pre>
@@ -277,7 +276,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint5 file0">
+<div class="hint4 file0">
 PlannerFacts.hs:92:1: Warning: Use camelCase<br/>
 Found<br/>
 <pre><span class='hs-definition'>get_stack</span> <span class='hs-varid'>blocks</span> <span class='hs-varid'>col</span> <span class='hs-keyglyph'>=</span> <span class='hs-varop'>...</span></pre>
@@ -286,7 +285,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint5 file0">
+<div class="hint4 file0">
 PlannerFacts.hs:96:1: Warning: Use camelCase<br/>
 Found<br/>
 <pre><span class='hs-definition'>check_actions</span> <span class='hs-layout'>(</span><span class='hs-varid'>world</span><span class='hs-layout'>,</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-varop'>...</span></pre>
@@ -295,7 +294,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint5 file0">
+<div class="hint4 file0">
 PlannerFacts.hs:100:1: Warning: Use camelCase<br/>
 Found<br/>
 <pre><span class='hs-definition'>is_Valid</span> <span class='hs-varid'>world</span> <span class='hs-keyglyph'>=</span> <span class='hs-varop'>...</span></pre>
@@ -304,7 +303,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint5 file0">
+<div class="hint4 file0">
 PlannerFacts.hs:108:1: Warning: Use camelCase<br/>
 Found<br/>
 <pre><span class='hs-definition'>shape_not_top</span> <span class='hs-varid'>world</span> <span class='hs-varid'>shape</span> <span class='hs-keyglyph'>=</span> <span class='hs-varop'>...</span></pre>
@@ -322,7 +321,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint2 file0">
+<div class="hint1 file0">
 PlannerFacts.hs:112:31: Warning: Avoid lambda<br/>
 Found<br/>
 <pre><span class='hs-keyglyph'>\</span> <span class='hs-varid'>x</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>is_shape</span> <span class='hs-varid'>x</span> <span class='hs-varid'>shape</span></pre>
@@ -331,7 +330,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint5 file0">
+<div class="hint4 file0">
 PlannerFacts.hs:118:1: Warning: Use camelCase<br/>
 Found<br/>
 <pre><span class='hs-definition'>check_size</span> <span class='hs-varid'>world</span> <span class='hs-keyglyph'>=</span> <span class='hs-varop'>...</span></pre>
@@ -340,7 +339,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint3 file0">
+<div class="hint2 file0">
 PlannerFacts.hs:122:43: Warning: Redundant bracket<br/>
 Found<br/>
 <pre><span class='hs-layout'>(</span><span class='hs-varid'>length</span> <span class='hs-varid'>stack</span><span class='hs-layout'>)</span> <span class='hs-comment'>-</span> <span class='hs-num'>2</span></pre>
@@ -349,7 +348,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint5 file0">
+<div class="hint4 file0">
 PlannerFacts.hs:127:1: Warning: Use camelCase<br/>
 Found<br/>
 <pre><span class='hs-definition'>compare_blocks</span> <span class='hs-varid'>stack</span> <span class='hs-layout'>(</span><span class='hs-varid'>pos1</span><span class='hs-layout'>,</span> <span class='hs-varid'>pos2</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-varop'>...</span></pre>
@@ -358,7 +357,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint3 file0">
+<div class="hint2 file0">
 PlannerFacts.hs:135:24: Warning: Redundant bracket<br/>
 Found<br/>
 <pre><span class='hs-layout'>(</span><span class='hs-varid'>map</span> <span class='hs-layout'>(</span><span class='hs-varid'>compare_blocks</span> <span class='hs-varid'>stack</span><span class='hs-layout'>)</span> <span class='hs-varid'>pos</span><span class='hs-layout'>)</span> <span class='hs-varop'>++</span> <span class='hs-varid'>run</span> <span class='hs-varid'>xs</span></pre>
@@ -367,7 +366,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint5 file0">
+<div class="hint4 file0">
 PlannerFacts.hs:153:1: Warning: Use camelCase<br/>
 Found<br/>
 <pre><span class='hs-definition'>is_shape</span> <span class='hs-layout'>(</span><span class='hs-conid'>Block</span> <span class='hs-keyword'>_</span> <span class='hs-varid'>x</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span><span class='hs-layout'>)</span> <span class='hs-varid'>shape</span> <span class='hs-keyglyph'>|</span> <span class='hs-varop'>...</span> <span class='hs-keyglyph'>=</span> <span class='hs-varop'>...</span></pre>
@@ -376,16 +375,7 @@ Why not<br/>
 
 </div>
 
-<div class="hint1 file0">
-PlannerFacts.hs:161:8: Error: Use print<br/>
-Found<br/>
-<pre><span class='hs-definition'>putStrLn</span> <span class='hs-layout'>(</span><span class='hs-varid'>show</span> <span class='hs-varop'>$</span> <span class='hs-varid'>run_parse</span> <span class='hs-varid'>args</span><span class='hs-layout'>)</span></pre>
-Why not<br/>
-<pre><span class='hs-definition'>print</span> <span class='hs-layout'>(</span><span class='hs-varid'>run_parse</span> <span class='hs-varid'>args</span><span class='hs-layout'>)</span></pre>
-
-</div>
-
-<div class="hint5 file0">
+<div class="hint4 file0">
 PlannerFacts.hs:165:1: Warning: Use camelCase<br/>
 Found<br/>
 <pre><span class='hs-definition'>run_parse</span> <span class='hs-varid'>args</span> <span class='hs-keyglyph'>=</span> <span class='hs-varop'>...</span></pre>
@@ -394,12 +384,30 @@ Why not<br/>
 
 </div>
 
-<div class="hint6 file0">
+<div class="hint5 file0">
 PlannerFacts.hs:167:17: Warning: Use head<br/>
 Found<br/>
 <pre><span class='hs-definition'>args</span> <span class='hs-varop'>!!</span> <span class='hs-num'>0</span></pre>
 Why not<br/>
 <pre><span class='hs-definition'>head</span> <span class='hs-varid'>args</span></pre>
+
+</div>
+
+<div class="hint4 file0">
+PlannerFacts.hs:174:1: Warning: Use camelCase<br/>
+Found<br/>
+<pre><span class='hs-definition'>parse_plan</span> <span class='hs-conid'>[]</span> <span class='hs-keyglyph'>=</span> <span class='hs-varop'>...</span></pre>
+Why not<br/>
+<pre><span class='hs-definition'>parsePlan</span> <span class='hs-conid'>[]</span> <span class='hs-keyglyph'>=</span> <span class='hs-varop'>...</span></pre>
+
+</div>
+
+<div class="hint2 file0">
+PlannerFacts.hs:175:41: Warning: Redundant bracket<br/>
+Found<br/>
+<pre><span class='hs-str'>" "</span> <span class='hs-varop'>++</span> <span class='hs-layout'>(</span><span class='hs-varid'>show</span> <span class='hs-varid'>col</span><span class='hs-layout'>)</span></pre>
+Why not<br/>
+<pre><span class='hs-str'>" "</span> <span class='hs-varop'>++</span> <span class='hs-varid'>show</span> <span class='hs-varid'>col</span></pre>
 
 </div>
 
