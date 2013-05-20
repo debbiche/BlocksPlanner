@@ -42,10 +42,12 @@ testWorld = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
 
 data Fact = OnTop Block Block Bool | LeftOf Block Block Bool |
             RightOf Block Block Bool | InGrabber Block Bool |
-            Above Block Block Bool | Under Block Block Bool |
-            IsBlock String Bool | IsColumn String Bool
+            Above Block Block Bool | Under Block Block Bool
+                                     deriving (Show, Eq)
+          --  IsBlock String Bool | IsColumn String Bool
 
 data Fluent = Fluent Fact | And [Fluent] | Or [Fluent]
+            deriving (Show, Eq)
 
 satisfies :: World -> Fluent -> Bool
 satisfies world fluent = check_fluent world fluent
