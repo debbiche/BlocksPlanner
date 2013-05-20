@@ -1,0 +1,15 @@
+FUNCION GRAPHPLAN(initial_state,target,actions)
+Create F(0) first layer of facts done with initial_state
+make i=0
+repeat
+	if F(i) is F(target) without mutex between them
+ 		if RESULT_WORKS return RESULT
+ 	else i++
+ 	create A(i) //Facts of A(i) = L(i-1)
+ 	create mutex A(i)
+ 	create F(i) with A(i)
+ 	create mutex F(i)
+ 	Connect A(i) with F(i-1)
+ 	Connect A(i) with F(i)
+ until A(i) == A(i - 1) && F(i) == F(i-1)
+prosit
