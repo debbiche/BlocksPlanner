@@ -98,7 +98,7 @@ parse_fluent sep fluent blocks_map = list
 
 parse_fact :: String -> [(String,Block)] -> Fluent
 parse_fact str block_maps
- | isInfixOf "ingrabber" str = get_in_grabber str block_maps
+ | isInfixOf "grabber" str = get_in_grabber str block_maps
  | otherwise = Fluent f
  where
    split = splitOn " " str

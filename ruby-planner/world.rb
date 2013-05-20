@@ -6,7 +6,7 @@ class World
   PREPOSITIONS = ["leftof", "under", "rightof", "ontop", "beside", "above", "inside"]
   attr_reader :world, :blocks, :grabber
   def initialize(world = nil, grabber = nil)
-    @grabber = grabber
+    @grabber = grabber.empty? ? nil : grabber
     if world
       @world = parse_world(world)
     else
@@ -277,14 +277,14 @@ class World
   end
 
   def encode_blocks
-    output = ""
+    output = []
     @blocks.each do |name, properties|
       form = properties["form"]
       color = properties["color"]
       size = properties["size"]
-      output << "#{name} #{form} #{size} #{color};"
+      output << "#{name} #{form} #{size} #{color}"
     end
-    output
+    output.join(";")
   end
 
   def copy

@@ -102,6 +102,7 @@ is_right_of w (RightOf b1 b2 bool) =
 
 is_in_grabber :: World -> Fact -> Bool
 is_in_grabber (World (blocks, Clear)) _ = False
+is_in_grabber (World (blocks, Grabber block)) (InGrabber b bool) = (block == b) == bool
 
 is_above :: World -> Fact -> Bool
 is_above w (Above (Floor _) _ _) = False
