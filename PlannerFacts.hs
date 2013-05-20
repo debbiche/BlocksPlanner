@@ -18,10 +18,11 @@ cols world = length blocks
 --PLANNER
 planner :: World -> Fluent -> [World] -> [[(World, Plan)]] -> [[(World, Plan)]] -> Plan
 planner w1 fluent acc (((w, plan):xs):xss) stack1
-  | satisfies w fluent = reverse plan -- base case
-  | w `elem` acc = planner w fluent acc (xs:xss) stack1 -- already visited this world
-  | otherwise    = planner w fluent (w:acc) (xs:xss) ((build_plan w plan):stack1)
-planner w1 fluent acc ([]:xss) stack1 = planner w1 fluent acc xss stack1 -- No brothers 
+  | satisfies w fluent = reverse plan
+  | w `elem` acc  = planner w fluent acc (xs:xss) stack1 
+  | w1 `elem` acc = planner w fluent acc (xs:xss) stack1 
+  | otherwise     = planner w fluent (w:acc) (xs:xss) ((build_plan w plan):stack1)
+planner w1 fluent acc ([]:xss) stack1 = planner w1 fluent acc xss stack1 
 planner w1 fluent acc [] stack1 = planner w1 fluent acc (reverse stack1) []
 
 build_plan'' :: World -> Plan -> [(World, Plan)]
@@ -29,8 +30,10 @@ build_plan'' w p =  filter check_actions list
   where
     list = build_plan w p
 
+-- Build all legal plans for a specific world and the resulting
+-- worlds from applying those plans
 build_plan :: World -> Plan -> [(World, Plan)]
-build_plan  world plan = build_plan' world plan [] possible_action
+build_plan world plan = build_plan' world plan [] possible_actions
  where
    build_plan' world plan acc []  = acc 
    build_plan' world plan acc (action:actions)
@@ -39,19 +42,19 @@ build_plan  world plan = build_plan' world plan [] possible_action
      where
        (new_world, is_allowed) = execute world action
 
-possible_action :: Plan
-possible_action =  [(y,x)| x <- [0..9], y <- ["pick", "drop"]]
+-- Returns all possible actions
+possible_actions :: Plan
+possible_actions = [(y,x)| x <- [0..9], y <- ["pick", "drop"]]
 
+-- Executes an action on a world and returns the resulting
+-- world and along with the validity
 execute :: World -> (String, Int) -> (World, Bool)
 execute world ("pick", column) = pick world column
 execute world ("drop", column) = dropp world column
 
-pick :: World -> Int -> (World, Bool)
+-- Picks up a block form a specific column (if allowed)
 pick (World (world, grabber)) column
-  | null curr_column =  (error "bacon :(")--(World (world, grabber), False)
-  where 
-    curr_column = get_stack world column
-pick (World (world, grabber)) column
+  | null curr_column = (World (world, grabber), False)
   | grabber == Clear = (World (new_world, Grabber new_grabber), True)
   | otherwise        = (World (world, grabber), False)
   where
@@ -60,17 +63,17 @@ pick (World (world, grabber)) column
     new_column  = tail curr_column -- remove block from column
     curr_column = get_stack world column
 
+-- Drops a block on top of a column (if allowed)
 dropp :: World -> Int -> (World, Bool)
 dropp (World (world, block)) column
   | block == Clear = (World (world, block), False) -- Nothing to drop, exep?
-  | block /= Clear  = (World (new_world, Clear), True)
-  | otherwise = (World (world, block), False)
+  | otherwise  = (World (new_world, Clear), True)
    where     
      new_world   = world !!= (column, new_column)
      new_column  = [(grabber_to_block block)] ++ curr_column 
      curr_column = get_stack world column -- column to drop on
-     --tomas = test (World (world, block)) column
 
+-- Extracts a block from a grabber
 grabber_to_block :: Grabber -> Block
 grabber_to_block (Grabber (Block name x y z)) = Block name x y z
 grabber_to_block _ = (error "something went wrong :(")
@@ -81,17 +84,13 @@ grabber_to_block _ = (error "something went wrong :(")
 (x:xs) !!= (0,el) = (el:xs)
 (x:xs) !!= (n,el) = (x:( xs !!= (n-1,el)))
 
-                    
+-- Returns a specific column from a world                    
 get_stack :: [[Block]] -> Int -> [Block]
 get_stack blocks col = blocks !! col
 
-
-get_blocks :: World -> [[Block]]
-get_blocks (World (blocks, _)) = blocks
-
+-- Wrapper function for is_valid_method
 check_actions :: (World, Plan) -> Bool
 check_actions (world,_) = is_Valid world
-
 
 -- Checks whether a world is valid or not
 is_Valid :: World -> Bool
@@ -100,18 +99,18 @@ is_Valid world = and rules
    (World (blocks, grabber)) = world
    rules = [shape_not_top world Pyramid,
             shape_not_top world Ball]
--- Rules
---Pyramids and balls cannot support anything (gen function)
+-- Rules --
+-- Pyramids and balls cannot support anything (gen function)
 shape_not_top :: World -> Shape -> Bool
 shape_not_top world shape = not $ or check_shape_pos
  where
    (World (blocks, _)) = world
    check_shape_pos     = map pos_shape ignore_first_blocks 
    pos_shape column    = any (\x -> is_shape x shape) column
-   ignore_first_blocks = map tail (filter (not . null) blocks) -- disrecard 1st pos
+   ignore_first_blocks = map tail (filter (not . null) blocks)
 
-
--- not tested yet
+-- Checks if a world has any blocks supported
+-- by smaller blocks
 check_size :: World -> Bool
 check_size world = and sizes 
    where
@@ -119,7 +118,8 @@ check_size world = and sizes
      sizes = run (zip pairs_lists blocks)
      pairs_lists = [[(x,x+1) | x <- [0 .. (length stack)-2] ] |  stack <- blocks] 
 
-
+-- Helper function for check_size that compares
+-- two blocks in a column
 compare_blocks :: [Block] -> (Int,Int) -> Bool
 compare_blocks stack (pos1, pos2) = cmp y yy
   where
@@ -144,7 +144,6 @@ cmp _      Small  = False
 cmp Wide   _      = True
 cmp _      Wide   = False
 cmp Tall   _      = True
---cmp _      Tall   = False
 
 -- HELPER -- Check if a block is of a specific shape
 is_shape :: Block -> Shape -> Bool
