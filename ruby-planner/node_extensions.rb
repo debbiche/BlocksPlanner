@@ -50,6 +50,12 @@ module Command
       elements.first.text_value
     end
 
+    ["any", "the", "all"].each do |qual|
+      define_method("#{qual}?") do
+        name == qual
+      end
+    end
+
     def get_blocks(world)
       world.send(name) {fetch_expression.get_blocks(world)}
     end
@@ -126,7 +132,7 @@ module Command
       orBucket = OrBucket.new
       blocks = Array.wrap(qualifier.get_all_blocks(world))
       blocks.each do |block|
-        orBucket.facts << "grabber #{block}"
+        orBucket.facts << "(grabber #{block})"
       end
       return orBucket.to_s
     end
@@ -154,10 +160,18 @@ module Command
       end
     end
 
-    def to_fact(world)
+    def to_facts(world)
+      outer_bucket = from.any? ? OrBucket.new : AndBucket.new
       Array.wrap(from.get_blocks(world)).each do |block|
-        
+        inner_bucket = OrBucket.new
+        preposition = to_preposition
+        targets = Array.wrap(to.get_all_blocks(world))
+        targets.each do |target_block|
+          inner_bucket.facts << "(#{preposition} #{block} #{target_block})"
+        end
+        outer_bucket.facts << inner_bucket.to_s
       end
+      outer_bucket.to_s
     end
 
     def from
@@ -194,7 +208,7 @@ module Command
       orBucket = OrBucket.new
       blocks = Array.wrap(position.get_all_blocks(world))
       blocks.each do |block|
-        orBucket.facts << "#{position.preposition_name} #{world.grabber} #{block}"
+        orBucket.facts << "(#{position.preposition_name} #{world.grabber} #{block})"
       end
       return orBucket.to_s
     end
@@ -218,9 +232,9 @@ module Command
     def to_s
       output = []
       facts.each do |f|
-        output << "(#{f})"
+        output << "#{f}"
       end
-      output.join(name)
+      output = output.join(name)
     end
   end
 

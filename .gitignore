@@ -12,6 +12,12 @@ lighttpd.conf
 #Ignore MAC fuzz
 *.DS_Store
 
+*.class
+GraphPlanner/bin
+
+#Ignore bin
+*/bin/
+
 #back up files
 *~
 

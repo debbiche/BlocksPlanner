@@ -4,17 +4,20 @@ import DataStructureFacts
 import Facts
 import Data.List.Split
 import System.Environment   
-import Parser
+import FactsParser
 
 plan :: World -> Fluent -> Plan
 plan w1 fluent = planner w1 fluent [] [[(w1,[])]] []
 
 -- Returns the number of columns in the world
-cols :: World -> Int
-cols world = length blocks
-  where
-    (World (blocks, _)) = world
-  
+--cols :: World -> Int
+--cols world = length blocks
+--  where
+--    (World (blocks, _)) = world
+
+-- Set the number of columns in the world
+cols = 10
+
 --PLANNER
 planner :: World -> Fluent -> [World] -> [[(World, Plan)]] -> [[(World, Plan)]] -> Plan
 planner w1 fluent acc (((w, plan):xs):xss) stack1
@@ -44,7 +47,7 @@ build_plan world plan = build_plan' world plan [] possible_actions
 
 -- Returns all possible actions
 possible_actions :: Plan
-possible_actions = [(y,x)| x <- [0..9], y <- ["pick", "drop"]]
+possible_actions = [(y,x)| x <- [0..cols-1], y <- ["pick", "drop"]]
 
 -- Executes an action on a world and returns the resulting
 -- world and along with the validity
@@ -152,15 +155,21 @@ is_shape (Block _ x _ _) shape
   | otherwise  = False
 
 
---main :: (World,World)
---main = do
---       args <- getArgs
---       putStrLn (show $ run_parse args)
+main :: IO ()
+main = do
+       args <- getArgs
+       print (init $ parse_plan $ run_parse args)
 
 
---run_parse :: [String] -> (World, World)
---run_parse args =  create_world x xs xss
--- where
---   x = args !! 0
---   xs = args !! 1
---   xss = args !! 2
+run_parse :: [String] -> Plan
+run_parse args =  plan start_world fluent
+ where
+   w_str      = args !! 0
+   fluent_str = args !! 1
+   blks_map   = args !! 2
+   (start_world, fluent) = create_world w_str fluent_str blks_map
+
+
+parse_plan :: Plan -> String
+parse_plan [] = []
+parse_plan ((action,col):xs) = (action++" "++(show col))++";"++parse_plan xs

@@ -42,10 +42,12 @@ testWorld = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
 
 data Fact = OnTop Block Block Bool | LeftOf Block Block Bool |
             RightOf Block Block Bool | InGrabber Block Bool |
-            Above Block Block Bool | Under Block Block Bool |
-            IsBlock String Bool | IsColumn String Bool
+            Above Block Block Bool | Under Block Block Bool
+                                     deriving (Show, Eq)
+          --  IsBlock String Bool | IsColumn String Bool
 
 data Fluent = Fluent Fact | And [Fluent] | Or [Fluent]
+            deriving (Show, Eq)
 
 satisfies :: World -> Fluent -> Bool
 satisfies world fluent = check_fluent world fluent
@@ -100,6 +102,7 @@ is_right_of w (RightOf b1 b2 bool) =
 
 is_in_grabber :: World -> Fact -> Bool
 is_in_grabber (World (blocks, Clear)) _ = False
+is_in_grabber (World (blocks, Grabber block)) (InGrabber b bool) = (block == b) == bool
 
 is_above :: World -> Fact -> Bool
 is_above w (Above (Floor _) _ _) = False
