@@ -24,7 +24,7 @@ planner w1 fluent acc (((w, plan):xs):xss) stack1
   | satisfies w fluent = reverse plan
   | w `elem` acc  = planner w fluent acc (xs:xss) stack1 
   | w1 `elem` acc = planner w fluent acc (xs:xss) stack1 
-  | otherwise     = planner w fluent (w:acc) (xs:xss) ((build_plan w plan):stack1)
+  | otherwise     = planner w fluent (w:acc) (xs:xss) (build_plan w plan:stack1)
 planner w1 fluent acc ([]:xss) stack1 = planner w1 fluent acc xss stack1 
 planner w1 fluent acc [] stack1 = planner w1 fluent acc (reverse stack1) []
 
@@ -40,7 +40,7 @@ build_plan world plan = build_plan' world plan [] possible_actions
  where
    build_plan' world plan acc []  = acc 
    build_plan' world plan acc (action:actions)
-     | is_allowed = build_plan' world plan ((new_world, (action:plan)):acc) actions
+     | is_allowed = build_plan' world plan ((new_world, action:plan):acc) actions
      | otherwise  = build_plan' world plan acc actions
      where
        (new_world, is_allowed) = execute world action
@@ -109,7 +109,7 @@ shape_not_top world shape = not $ or check_shape_pos
  where
    (World (blocks, _)) = world
    check_shape_pos     = map pos_shape ignore_first_blocks 
-   pos_shape column    = any (\x -> is_shape x shape) column
+   pos_shape           = any (`is_shape` shape)
    ignore_first_blocks = map tail (filter (not . null) blocks)
 
 -- Checks if a world has any blocks supported
