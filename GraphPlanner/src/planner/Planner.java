@@ -15,6 +15,27 @@ public class Planner {
 	private static ArrayList<World> visitedWorlds = new ArrayList<World>();
 	
 	public static String planner() {
+		String plan;
+		while(true){
+			if(false){//DerivedFacts contains all finalfacts && !mutex between any pair of them
+				plan = extractSolution();	// Returns the solution
+				if (validPlan(plan)){
+				 return plan;
+				 
+				}
+				
+				else{
+					return "failure";
+				}
+			}
+				
+			else{ 
+				generateNextLayer(); // Expands graph
+			}
+		}
+
+	}	
+		/*
 		boolean breakFlag = false;
 		String plan = "";
 		ArrayList<HashMap<String,World>> worldsToProccess = new ArrayList<HashMap<String,World>>();
@@ -42,6 +63,44 @@ public class Planner {
 		}
 		return currentPlan;
 	}
+		*/
+	
+
+	private static void generateNextLayer() {
+		// TODO Create the next layer of the graph
+		LinkActionToPrecondition();
+		generateEffects();
+		createFactsMutex();
+		createActionsMutex();
+		
+	}
+	private static boolean validPlan(String plan){
+		// TODO Check if found valid plan 
+		return true;
+	}
+	
+	private static void createFactsMutex() {
+		// TODO Auto-generated method stub
+		
+	}
+	private static void createActionsMutex() {
+		// TODO Auto-generated method stub
+		
+	}
+	private static void generateEffects() {
+		// TODO Auto-generated method stub
+		
+	}
+	private static void LinkActionToPrecondition() {
+		// TODO Auto-generated method stub
+		
+	}
+	private static String extractSolution() {
+		// TODO Backtrack the solution
+		// Use a heuristics otherwise can be intractable see page 401
+		return null;
+	}
+	/*
 	public static HashMap<String,World> generateSons(String plan) {
 		HashMap<String,World> _returnValue = new HashMap <String,World>();
 		_mutex = createFactsMutex();
@@ -68,7 +127,7 @@ public class Planner {
 		}
 		return _returnValue;
 	}
-	
+	*/
 	public static boolean isVisited(World w) {
 		Iterator it = visitedWorlds.iterator();
 		while(it.hasNext()) {
@@ -129,6 +188,7 @@ public class Planner {
 		return false;
 	}
 	
+	/*
 	public static ArrayList<String> createFactsMutex() {
 		ArrayList<String> _returnValue = new ArrayList<String>();
 		Iterator it = currentWorld.topOfWorld().iterator();
@@ -148,6 +208,7 @@ public class Planner {
 		}
 		return _returnValue;
 	}
+	*/
 	
 	public static ArrayList <String> createActions() {
 		ArrayList <String> _actions = new ArrayList<String>(); 
