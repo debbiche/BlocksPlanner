@@ -35,7 +35,7 @@ create_world w1 f_str maps = (world,fluent)
    where
      blocks_map   = create_blocks maps -- get block names
      split_colsw1 = map (splitOn " ") (init $ splitOn ";" w1)
-     blocks_w1    = create_columns split_colsw1 blocks_map
+     blocks_w1    = map reverse (create_columns split_colsw1 blocks_map)
      grabber_w1   = create_grabber grabber_str1 blocks_map
      world        = World (blocks_w1, grabber_w1)
      grabber_str1 = last $ splitOn " " (last $ splitOn ";" w1)
@@ -63,7 +63,7 @@ create_column :: [String] -> [(String,Block)]-> [Block]
 create_column [] _  = [] 
 create_column (x:xs)  maps 
  | null x = []
- | otherwise =  reverse $ block:create_column xs maps
+ | otherwise =  block:create_column xs maps
   where
     Just block = lookup x maps
 
