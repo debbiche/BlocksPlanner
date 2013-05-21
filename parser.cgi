@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+
+## NOTE:  This script is now used as a command line script instead of as a cgi script
+##        We use it as an interface to GF
+
 import cgi
 import os
 import sys
