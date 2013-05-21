@@ -6,7 +6,11 @@ import java.util.PriorityQueue;
 
 import planner.World.Block;
 
+/*
 
+A state-space search brute force planning algorithm
+
+*/
 
 public class Planner {
 	PriorityQueue<Movement> plan;
