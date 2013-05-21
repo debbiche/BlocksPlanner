@@ -5,10 +5,10 @@ import DataStructureFacts
 import Facts
 import Data.List
 
+-- This module parses the syntax received from ruby mapper
+-- it parses the initial world, facts and blocks mapping
+
 -- Test the parse functions
-
-test = (testWorld,testFluent) == test_parse
-
 test_parse :: (World, Fluent)
 test_parse = create_world w1 fluent maps
    where
@@ -84,18 +84,21 @@ extract_block str  = (name, Block name shape size color)
     color = parse_color $ blocks !! 3
     blocks = splitOn " " str
 
+-- Main function for parsing the facts 
 extract_fluent :: String -> [(String,Block)] -> Fluent
 extract_fluent str block_maps
    | isInfixOf "&" str = And $ parse_fluent "&" str block_maps
    | isInfixOf "|" str = Or $ parse_fluent "|" str block_maps
    | otherwise         = parse_fact str block_maps 
 
+-- Parse a list of fluents
 parse_fluent :: String -> String -> [(String,Block)] -> [Fluent]
 parse_fluent sep fluent blocks_map = list 
    where
      facts = splitOn sep fluent
      list = [parse_fact fact blocks_map | fact <- facts]
 
+-- Parse a single fact
 parse_fact :: String -> [(String,Block)] -> Fluent
 parse_fact str block_maps
  | isInfixOf "grabber" str = get_in_grabber str block_maps
@@ -109,11 +112,12 @@ parse_fact str block_maps
    Just b1 = lookup b1_str block_maps
    Just b2 = lookup b2_str block_maps
 
+-- Parse the InGrabber fact
 get_in_grabber :: String -> [(String,Block)] -> Fluent
 get_in_grabber str block_maps = Fluent f
   where
    split = splitOn " " str
-   b1_str = init (split !! 1) --rem the ( in 1st elem
+   b1_str = init (split !! 1)
    f = InGrabber b1 True
    Just b1 = lookup b1_str block_maps
    
