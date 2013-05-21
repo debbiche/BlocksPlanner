@@ -1,3 +1,7 @@
+;; This is a rudimentary domain that bases facts upon row and column indices
+;; It is not complete as it lacks:
+;;  - predicates for leftof and rightof, which are needed to express the goals
+
 (define (domain ShrdLite)
   (:requirements :strips,:adl)
   (:predicates
