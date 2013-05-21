@@ -2,7 +2,7 @@
 ;; It is not complete as it lacks:
 ;;  - predicates for leftof and rightof, which are needed to express the goals
 
-(define (domain ShrdLite)
+(define (domain ShrdLiteIndices)
   (:requirements :strips,:adl)
   (:predicates
                 (row ?index)

@@ -4,7 +4,7 @@
   ;;    - Above, beside, inside
   ;;    - Sanity checks sizes and for inside
 
-  (define (domain ShrdLite)
+  (define (domain ShrdLitePositions)
     (:requirements :strips, :adl)
     (:predicates
                   (column ?column ?columnIndex)
