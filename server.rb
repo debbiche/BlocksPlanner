@@ -1,6 +1,6 @@
 require 'sinatra'
-require File.dirname(__FILE__) + "/ruby-planner/parser"
-require File.dirname(__FILE__) + "/ruby-planner/world"
+require File.dirname(__FILE__) + "/ruby-mapper/parser"
+require File.dirname(__FILE__) + "/ruby-mapper/world"
 
 #
 # BLOCKSPLANNER WEB SERVER
@@ -26,7 +26,7 @@ get '/planner.cgi' do
   initial_world = World.new(world, holding)
   tree_wrapper  = Parser.parse(trees.split("\n").first) # We only use the first syntax tree, if there are many
   facts = tree_wrapper.tree.command.to_facts(initial_world)
-  command = %Q(runhaskell PlannerFacts "#{initial_world.encode_world}" "#{facts}" "#{initial_world.encode_blocks}")
+  command = %Q(cd haskell-planner && runhaskell PlannerFacts "#{initial_world.encode_world}" "#{facts}" "#{initial_world.encode_blocks}")
   puts command
   plan = `#{command}`
   plan.gsub(/\"/, "").split(";").join("\n")
