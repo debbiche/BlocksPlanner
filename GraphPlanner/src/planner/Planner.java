@@ -26,7 +26,6 @@ public class Planner {
 				if (validPlan(plan)) return plan;
 				else return "failure";
 			}		HashMap<Integer,Action> _actions = Action.generateActions(_blocks);
-			System.out.println(derivedFacts.toString());
 			ActionLayer al = new ActionLayer(i, derivedFacts);
 			al.createActions(_actions);
 			i++;

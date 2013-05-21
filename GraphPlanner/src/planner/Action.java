@@ -101,7 +101,6 @@ public class Action {
 				_actions.put(k++, action);
 			}
 		}
-			System.out.println(k);
 //			//GENERATE DROPS
 			it = _blocks.keySet().iterator();
 			//DROPS OVER BLOCKS 

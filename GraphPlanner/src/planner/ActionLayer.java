@@ -15,14 +15,14 @@ public class ActionLayer {
 	HashMap<Integer,Action> _actions = new HashMap<Integer,Action>();
 	HashMap<String,Integer> _preconditions;
 	HashMap<String,Integer> _effects = new HashMap<String, Integer>();
-	HashMap<Integer,ActionLayer> _layers = new HashMap<Integer, ActionLayer>();
+	static HashMap<Integer,ActionLayer>  _layers = new HashMap<Integer, ActionLayer>();
 	int id= 0;
 	
 	public ActionLayer(int i, HashMap<String, Integer> _preconditions) {
 		super();
 		this.id = i;
+		System.out.println(i);
 		this.parentActionLayer = i-1;
-		System.out.println(id);
 		if (id != 0)
 			this._mutexBetweenPreconditions.putAll(_layers.get(parentActionLayer).get_mutexBetweenEffects());
 		else
@@ -75,7 +75,6 @@ public class ActionLayer {
 				}
 			}
 		}
-		System.out.println(_actions.size());
 		this._actions = _actions;
 		createActionMutexByPreconditions();
 		createActionMutexByEffects();
@@ -83,8 +82,6 @@ public class ActionLayer {
 		createEffects();
 		createEffectsMutex();
 		_layers.put(this.id, this);
-		System.out.println(_effects.size());
-		System.out.println(_preconditions.size());
 	}
 	
 	private void createEffectsMutex() {
