@@ -13,3 +13,14 @@ repeat
  	Connect A(i) with F(i)
  until A(i) == A(i - 1) && F(i) == F(i-1)
 prosit
+
+a
+b pick
+c
+
+d
+e pick
+f
+
+pick b a
+pick b a	

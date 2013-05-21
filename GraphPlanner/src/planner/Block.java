@@ -35,7 +35,11 @@ public class Block {
 	public boolean fitsInside(Block b) {
 		return (this.size<=b.size);
 	}
-
+	
+	public boolean fitOver(Block b) {
+		return (this.fitsInside(b) && !b.isSpecialShape());
+	}
+	
 	public String getId() {
 		return id;
 	}

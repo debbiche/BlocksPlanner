@@ -34,7 +34,7 @@ public class Parser {
 				b = elements.nextToken().toString();
 			}
 			
-			if (fact.equals("OnTop")) 
+			if (fact.equals("Over")) 
 				if (b.contains("floor")) {
 					column = Integer.parseInt(b.split("floor")[1]);
 					world.getWorld().get(column).add(a);
