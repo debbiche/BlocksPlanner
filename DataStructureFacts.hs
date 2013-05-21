@@ -3,6 +3,7 @@ module DataStructureFacts where
 import Data.List
 
 -- This module shows how we represent the world of blocks on a floor
+-- This representation is used by the facts brute force planner
 
 data Shape = Square | Rectangle | Pyramid |
              Ball | Box deriving (Show, Eq)

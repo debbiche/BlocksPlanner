@@ -1,6 +1,7 @@
 module DataStructure where
 
 -- This module shows how we represent the world of blocks on a floor
+-- it is used the worlds comaprison planner
 
 data Shape = Square | Rectangle | Pyramid |
              Ball | Box deriving (Show, Eq)

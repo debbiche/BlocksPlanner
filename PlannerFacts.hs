@@ -9,11 +9,6 @@ import FactsParser
 plan :: World -> Fluent -> Plan
 plan w1 fluent = planner w1 fluent [] [[(w1,[])]] []
 
--- Returns the number of columns in the world
---cols :: World -> Int
---cols world = length blocks
---  where
---    (World (blocks, _)) = world
 
 -- Set the number of columns in the world
 cols = 10
@@ -23,15 +18,9 @@ planner :: World -> Fluent -> [World] -> [[(World, Plan)]] -> [[(World, Plan)]] 
 planner w1 fluent acc (((w, plan):xs):xss) stack1
   | satisfies w fluent = reverse plan
   | w `elem` acc  = planner w fluent acc (xs:xss) stack1 
-  | w1 `elem` acc = planner w fluent acc (xs:xss) stack1 
   | otherwise     = planner w fluent (w:acc) (xs:xss) (build_plan w plan:stack1)
 planner w1 fluent acc ([]:xss) stack1 = planner w1 fluent acc xss stack1 
 planner w1 fluent acc [] stack1 = planner w1 fluent acc (reverse stack1) []
-
-build_plan'' :: World -> Plan -> [(World, Plan)]
-build_plan'' w p =  filter check_actions list
-  where
-    list = build_plan w p
 
 -- Build all legal plans for a specific world and the resulting
 -- worlds from applying those plans
@@ -91,76 +80,14 @@ grabber_to_block _ = (error "something went wrong :(")
 get_stack :: [[Block]] -> Int -> [Block]
 get_stack blocks col = blocks !! col
 
--- Wrapper function for is_valid_method
-check_actions :: (World, Plan) -> Bool
-check_actions (world,_) = is_Valid world
-
--- Checks whether a world is valid or not
-is_Valid :: World -> Bool
-is_Valid world = and rules
- where
-   (World (blocks, grabber)) = world
-   rules = [shape_not_top world Pyramid,
-            shape_not_top world Ball]
--- Rules --
--- Pyramids and balls cannot support anything (gen function)
-shape_not_top :: World -> Shape -> Bool
-shape_not_top world shape = not $ or check_shape_pos
- where
-   (World (blocks, _)) = world
-   check_shape_pos     = map pos_shape ignore_first_blocks 
-   pos_shape           = any (`is_shape` shape)
-   ignore_first_blocks = map tail (filter (not . null) blocks)
-
--- Checks if a world has any blocks supported
--- by smaller blocks
-check_size :: World -> Bool
-check_size world = and sizes 
-   where
-     (World (blocks, _)) = world
-     sizes = run (zip pairs_lists blocks)
-     pairs_lists = [[(x,x+1) | x <- [0 .. (length stack)-2] ] |  stack <- blocks] 
-
--- Helper function for check_size that compares
--- two blocks in a column
-compare_blocks :: [Block] -> (Int,Int) -> Bool
-compare_blocks stack (pos1, pos2) = cmp y yy
-  where
-    Block name1 x  y  z  = stack !! pos1
-    Block name2 xx yy zz = stack !! pos2
-
-
-run :: [([(Int,Int)],[Block])] -> [Bool]
-run [] = []
-run ((pos,stack):xs) = (map (compare_blocks stack) pos)++run xs
-    
---Very naive compare method
-cmp :: Size -> Size -> Bool
-cmp s1 s2
- | s1 == s2       = True
-cmp Large  _      = True
-cmp _      Large  = False
-cmp Medium _      = True
-cmp _      Medium = False 
-cmp Small  _      = True
-cmp _      Small  = False
-cmp Wide   _      = True
-cmp _      Wide   = False
-cmp Tall   _      = True
-
--- HELPER -- Check if a block is of a specific shape
-is_shape :: Block -> Shape -> Bool
-is_shape (Block _ x _ _) shape
-  | x == shape = True
-  | otherwise  = False
-
-
+-- Used for command line support 
 main :: IO ()
 main = do
        args <- getArgs
        print (init $ parse_plan $ run_parse args)
 
-
+-- Runs the arguments we get from the command line arguments
+-- and sends them to the parser
 run_parse :: [String] -> Plan
 run_parse args =  plan start_world fluent
  where
@@ -169,7 +96,7 @@ run_parse args =  plan start_world fluent
    blks_map   = args !! 2
    (start_world, fluent) = create_world w_str fluent_str blks_map
 
-
+-- Parses the plan we get for the ruby server
 parse_plan :: Plan -> String
 parse_plan [] = []
 parse_plan ((action,col):xs) = (action++" "++(show col))++";"++parse_plan xs
