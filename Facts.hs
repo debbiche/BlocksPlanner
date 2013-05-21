@@ -29,6 +29,7 @@ empty = []
 
 testFluent = Fluent (InGrabber h True)
 testWorld = World ([empty,s1,s2,empty,s3,empty,empty,s4,empty,s5],Clear)
+
 data Fact = OnTop Block Block Bool | LeftOf Block Block Bool |
             RightOf Block Block Bool | InGrabber Block Bool |
             Above Block Block Bool | Under Block Block Bool
